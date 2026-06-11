@@ -1,0 +1,147 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { Compass, ExternalLink, MoreHorizontal, Plus } from "lucide-react";
+import { formatDateRange, formatRelativeTime } from "@/lib/dates";
+import { getFileUrl } from "@/lib/files";
+import type { JourneyLog } from "@/types";
+import { StatusBadge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+
+interface JourneyLogCardProps {
+  log: JourneyLog;
+}
+
+export function JourneyLogCard({ log }: JourneyLogCardProps) {
+  const coverUrl = log.cover ? getFileUrl(log, log.cover, { thumb: "400x240" }) : null;
+  const dateRange = formatDateRange(log.start_date, log.end_date);
+
+  return (
+    <article className="flex items-stretch gap-5 rounded-[8px] bg-white p-5 shadow-card">
+      <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-[8px] bg-primary/10">
+        {coverUrl ? (
+          <Image
+            src={coverUrl}
+            alt={log.title}
+            fill
+            className="object-cover"
+            sizes="160px"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-primary/40">
+            <Compass className="h-8 w-8" strokeWidth={1.25} />
+          </div>
+        )}
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col justify-between">
+        <div>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <h2 className="font-serif text-xl text-text-primary">{log.title}</h2>
+            <StatusBadge status={log.status} />
+          </div>
+          {dateRange ? (
+            <p className="text-sm text-text-body">{dateRange}</p>
+          ) : null}
+          {log.country_region ? (
+            <p className="mt-1 text-sm text-text-body">{log.country_region}</p>
+          ) : null}
+          {log.description ? (
+            <p className="mt-2 line-clamp-2 text-sm text-text-body">
+              {log.description}
+            </p>
+          ) : null}
+        </div>
+        <p className="mt-3 text-xs text-text-body/70">
+          {formatRelativeTime(log.updated)}
+        </p>
+      </div>
+
+      <div className="flex shrink-0 flex-col items-end justify-between">
+        <div className="flex items-center gap-2">
+          <Link href={`/app/logs/${log.id}`}>
+            <Button variant="outline" size="sm">
+              Continue Writing
+            </Button>
+          </Link>
+          <button
+            type="button"
+            className="rounded-[4px] p-2 text-text-body hover:bg-black/[0.04]"
+            aria-label="More options"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export function NewJourneyLogCard() {
+  return (
+    <Link
+      href="/app/logs/new"
+      className="flex items-center gap-5 rounded-[8px] border border-dashed border-black/10 bg-white/60 p-5 shadow-card transition hover:border-accent/40 hover:bg-white"
+    >
+      <div className="flex h-28 w-40 shrink-0 items-center justify-center rounded-[8px] bg-accent/10">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white">
+          <Plus className="h-6 w-6" />
+        </div>
+      </div>
+      <div>
+        <h2 className="font-serif text-xl text-text-primary">
+          Start a New Journey Log
+        </h2>
+        <p className="mt-1 text-sm text-text-body">
+          Capture your next adventure in a beautiful, calm space.
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+export function EmptyLogsState() {
+  return (
+    <div className="rounded-[8px] bg-white px-8 py-16 text-center shadow-card">
+      <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10 text-accent">
+        <Compass className="h-8 w-8" strokeWidth={1.25} />
+      </div>
+      <h2 className="font-serif text-2xl text-text-primary">
+        Your journey begins here
+      </h2>
+      <p className="mx-auto mt-3 max-w-md text-text-body">
+        You haven&apos;t created any journey logs yet. Start your first log and
+        begin capturing the places, moments, and stories from your travels.
+      </p>
+      <Link href="/app/logs/new" className="mt-8 inline-block">
+        <Button>+ New Journey Log</Button>
+      </Link>
+    </div>
+  );
+}
+
+export function LogsFooterQuote() {
+  return (
+    <footer className="mt-16 pb-8 text-center">
+      <Compass className="mx-auto mb-3 h-5 w-5 text-accent" strokeWidth={1.5} />
+      <p className="mx-auto max-w-xl font-serif text-base italic text-text-body">
+        &ldquo;The world is a book and those who do not travel read only one
+        page.&rdquo; — Saint Augustine
+      </p>
+    </footer>
+  );
+}
+
+export function PublicProfileButton({ slug }: { slug?: string }) {
+  if (!slug) return null;
+
+  return (
+    <a href={`/j/${slug}`} target="_blank" rel="noreferrer">
+      <Button variant="outline" size="sm">
+        <ExternalLink className="h-4 w-4" />
+        View Public Profile
+      </Button>
+    </a>
+  );
+}
