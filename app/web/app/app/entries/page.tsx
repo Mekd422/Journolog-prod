@@ -89,7 +89,7 @@ export default function EntriesPage() {
       ) : entries.length === 0 ? (
         <div className="rounded-[8px] bg-white p-10 text-center shadow-card">
           <p className="text-text-body">
-            You haven't created any entries yet.
+            You have not created any entries yet.
           </p>
           <Link href="/app/logs" className="mt-4 inline-block">
             <Button variant="outline">View Journey Logs</Button>
