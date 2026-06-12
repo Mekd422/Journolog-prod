@@ -18,9 +18,10 @@ import { cn } from "@/lib/utils";
 interface TipTapEditorProps {
   content?: Record<string, unknown>;
   onChange?: (content: Record<string, unknown>) => void;
+  journeyLogId: string;
 }
 
-export function TipTapEditor({ content, onChange }: TipTapEditorProps) {
+export function TipTapEditor({ content, onChange, journeyLogId }: TipTapEditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -37,7 +38,7 @@ export function TipTapEditor({ content, onChange }: TipTapEditorProps) {
         placeholder: "Begin writing your entry...",
       }),
     ],
-    content: content ?? "",
+    content: content && Object.keys(content).length > 0 ? content : "", // Handled empty object gracefully on init
     editorProps: {
       attributes: {
         class:
@@ -49,13 +50,24 @@ export function TipTapEditor({ content, onChange }: TipTapEditorProps) {
     },
   });
 
+  // Fixed synchronization hook
   useEffect(() => {
-    if (editor && content && !editor.isDestroyed) {
-      const current = JSON.stringify(editor.getJSON());
-      const incoming = JSON.stringify(content);
-      if (current !== incoming) {
-        editor.commands.setContent(content);
-      }
+    if (!editor || editor.isDestroyed || !content) return;
+
+    // Avoid syncing if the incoming content is an empty object `{}` 
+    if (Object.keys(content).length === 0) return;
+
+    const current = JSON.stringify(editor.getJSON());
+    const incoming = JSON.stringify(content);
+    
+    if (current !== incoming) {
+      // Use queueMicrotask or setTimeout to defer setting content, 
+      // preventing conflicts with active schema/image update transactions
+      queueMicrotask(() => {
+        if (!editor.isDestroyed) {
+          editor.commands.setContent(content, false); // false prevents resetting the cursor position unnecessarily
+        }
+      });
     }
   }, [content, editor]);
 
@@ -72,17 +84,21 @@ export function TipTapEditor({ content, onChange }: TipTapEditorProps) {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("user", pb.authStore.record?.id ?? "");
+      formData.append("journey_log", journeyLogId);
 
       try {
         const record = await pb.collection("media").create(formData);
         const url = pb.files.getURL(record, record.file);
+        
+        // Focus and insert image node
         editor.chain().focus().setImage({ src: url }).run();
-      } catch {
+      } catch (err) {
+        console.error("Upload error:", err);
         alert("Could not upload image. Please try again.");
       }
     };
     input.click();
-  }, [editor]);
+  }, [editor, journeyLogId]);
 
   if (!editor) {
     return (
