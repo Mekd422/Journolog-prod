@@ -62,12 +62,10 @@ export default function TagsPage() {
       setError("");
 
       try {
-        // Fetch all tags
         const tags = await pb.collection("tags").getFullList<Tag>({
           sort: "type,name",
         });
 
-        // Group tags by type
         const grouped: Record<string, Tag[]> = {};
         tags.forEach((tag) => {
           if (!grouped[tag.type]) {
@@ -103,7 +101,6 @@ export default function TagsPage() {
     setLogsForTag([]);
 
     try {
-      // Query journey_logs that contain this tag
       const logs = await pb
         .collection("journey_logs")
         .getFullList<JourneyLog>({
@@ -145,7 +142,6 @@ export default function TagsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Tags Section */}
           <div className="lg:col-span-2 space-y-8">
             {Object.entries(tagsByType).map(([type, tags]) => {
               const colors = tagTypeColors[type] || tagTypeColors.style;
@@ -179,7 +175,6 @@ export default function TagsPage() {
             })}
           </div>
 
-          {/* Selected Tag Results */}
           {selectedTag && (
             <div className="lg:col-span-1">
               <div className="sticky top-8 rounded-[8px] bg-white p-6 shadow-card">
