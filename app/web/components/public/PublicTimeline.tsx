@@ -16,12 +16,12 @@ export function PublicTimeline({ entries }: { entries: Entry[] }) {
           <h2 className="mt-2 font-serif text-3xl text-text-primary">
             {entry.title}
           </h2>
-          {entry.location ? (
+          {entry.location_name && (
             <p className="mt-2 flex items-center gap-2 text-sm text-text-body">
               <MapPin className="h-4 w-4" />
-              {entry.location}
+              {entry.location_name}
             </p>
-          ) : null}
+          )}
           <div className="mt-6 max-w-3xl">
             <EntryContent content={entry.content} />
           </div>
