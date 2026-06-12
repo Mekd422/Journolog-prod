@@ -4,7 +4,49 @@ import { Compass } from "lucide-react";
 import { createServerPocketBase } from "@/lib/pocketbase-server";
 import { getFileUrl } from "@/lib/files";
 import { PublicHero, PublicTimeline } from "@/components/public/PublicTimeline";
+import { JourneyMap } from "@/components/public/JourneyMap";
 import type { Entry, JourneyLog } from "@/types";
+
+export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const pb = createServerPocketBase();
+
+  try {
+    const logs = await pb.collection("journey_logs").getList<JourneyLog>(1, 1, {
+      filter: `slug = "${slug}" && status = "public"`,
+    });
+
+    if (!logs.items.length) {
+      return {
+        title: "Journey Not Found | Journolog",
+      };
+    }
+
+    const log = logs.items[0];
+    const coverUrl = log.cover ? getFileUrl(log, log.cover) : null;
+
+    return {
+      title: `${log.title} | Journolog`,
+      description:
+        log.description || "Journey log shared on Journolog",
+      openGraph: {
+        title: log.title,
+        description: log.description || "Journey log",
+        images: coverUrl ? [{ url: coverUrl }] : [],
+      },
+    };
+  } catch {
+    return {
+      title: "Journey Not Found | Journolog",
+    };
+  }
+}
 
 export default async function PublicJourneyPage({
   params,
@@ -48,7 +90,7 @@ export default async function PublicJourneyPage({
           </Link>
           <Link
             href="/signup"
-            className="rounded-[4px] bg-accent px-4 py-2 text-sm font-medium text-white"
+            className="rounded-[4px] bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
           >
             Start Your Log
           </Link>
@@ -62,6 +104,15 @@ export default async function PublicJourneyPage({
           countryRegion={log.country_region}
           coverUrl={coverUrl}
         />
+
+        {entries.some((e) => e.show_on_map && e.latitude && e.longitude) && (
+          <div className="mb-16">
+            <h2 className="mb-6 font-serif text-2xl text-text-primary">
+              Journey Map
+            </h2>
+            <JourneyMap entries={entries} />
+          </div>
+        )}
 
         {entries.length > 0 ? (
           <PublicTimeline entries={entries} />
