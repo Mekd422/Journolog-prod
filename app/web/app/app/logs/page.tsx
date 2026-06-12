@@ -1,6 +1,17 @@
 import { LogsDashboard } from "@/components/logs/LogsDashboard";
+import { PublicProfileButton } from "@/components/logs/JourneyLogCard";
+import { pb } from "@/lib/pocketbase";
 
-export default function LogsPage() {
+export default async function LogsPage() {
+  let publicProfileSlug: string | undefined;
+
+  try {
+    const user = await pb.collection("users").getOne(pb.authStore.model?.id);
+    publicProfileSlug = user.public_profile_slug;
+  } catch {
+    // User not found or error fetching
+  }
+
   return (
     <main className="px-8 py-10 lg:px-12">
       <header className="mb-10 flex flex-wrap items-start justify-between gap-4">
@@ -12,6 +23,7 @@ export default function LogsPage() {
             All of your travels, in one place.
           </p>
         </div>
+        <PublicProfileButton slug={publicProfileSlug} />
       </header>
 
       <LogsDashboard />
