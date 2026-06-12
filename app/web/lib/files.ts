@@ -6,6 +6,13 @@ export function getFileUrl(
   filename: string,
   options?: { thumb?: string }
 ): string {
-  if (!filename) return "";
-  return pb.files.getURL(record, filename, options);
+  if (!filename || !record) return "";
+  
+  try {
+    const url = pb.files.getURL(record, filename, options);
+    return url || "";
+  } catch (error) {
+    console.error("Error generating file URL:", { filename, record: record.id, error });
+    return "";
+  }
 }
