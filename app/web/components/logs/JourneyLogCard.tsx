@@ -8,6 +8,8 @@ import { getFileUrl } from "@/lib/files";
 import type { JourneyLog } from "@/types";
 import { StatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { useEffect, useState } from "react";
+import { pb } from "@/lib/pocketbase";
 
 interface JourneyLogCardProps {
   log: JourneyLog;
@@ -67,7 +69,7 @@ export function JourneyLogCard({ log }: JourneyLogCardProps) {
           </Link>
           <button
             type="button"
-            className="rounded-[4px] p-2 text-text-body hover:bg-black/[0.04]"
+            className="rounded-[4px] p-2 text-text-body hover:bg-black/4"
             aria-label="More options"
           >
             <MoreHorizontal className="h-4 w-4" />
@@ -78,7 +80,113 @@ export function JourneyLogCard({ log }: JourneyLogCardProps) {
   );
 }
 
-export function NewJourneyLogCard() {
+export function JourneyLogGridCard({ log }: JourneyLogCardProps) {
+  const coverUrl = log.cover ? getFileUrl(log, log.cover, { thumb: "400x240" }) : null;
+  const dateRange = formatDateRange(log.start_date, log.end_date);
+  const [entryCount, setEntryCount] = useState(0);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    async function loadEntryCount() {
+      try {
+        const count = await pb.collection("entries").getFullList({
+          filter: `journey_log = "${log.id}"`,
+        });
+        setEntryCount(count.length);
+      } catch {
+        setEntryCount(0);
+      }
+    }
+    loadEntryCount();
+  }, [log.id]);
+
+  // Debug logging
+  useEffect(() => {
+    if (log.cover) {
+      console.log(`Cover for ${log.title}:`, { cover: log.cover, url: coverUrl });
+    }
+  }, [log, coverUrl]);
+
+  return (
+    <Link href={`/app/logs/${log.id}`}>
+      <article className="group overflow-hidden rounded-[8px] bg-white shadow-card transition hover:shadow-lg">
+        <div className="relative h-48 w-full overflow-hidden bg-primary/10">
+          {coverUrl && !imageError ? (
+            <Image
+              src={coverUrl}
+              alt={log.title}
+              fill
+              className="object-cover transition group-hover:scale-105"
+              sizes="300px"
+              onError={() => {
+                console.error(`Failed to load image: ${coverUrl}`);
+                setImageError(true);
+              }}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-primary/40">
+              <Compass className="h-12 w-12" strokeWidth={1.25} />
+            </div>
+          )}
+        </div>
+
+        <div className="p-5">
+          <h3 className="font-serif text-lg text-text-primary group-hover:text-accent">
+            {log.title}
+          </h3>
+
+          {dateRange && (
+            <p className="mt-1 text-xs text-text-body">
+              {dateRange} • {entryCount} {entryCount === 1 ? "entry" : "entries"}
+            </p>
+          )}
+
+          {log.country_region && (
+            <p className="mt-2 text-sm text-text-body">
+              {log.country_region}
+            </p>
+          )}
+
+          {log.description && (
+            <p className="mt-3 line-clamp-2 text-sm text-text-body">
+              {log.description}
+            </p>
+          )}
+
+          <div className="mt-4">
+            <Button variant="outline" size="sm">
+              Continue Writing
+            </Button>
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
+}
+
+export function NewJourneyLogCard({ variant = "list" }: { variant?: "list" | "grid" }) {
+  if (variant === "grid") {
+    return (
+      <Link
+        href="/app/logs/new"
+        className="group flex items-center justify-center overflow-hidden rounded-[8px] border-2 border-dashed border-black/10 bg-white/60 transition hover:border-accent/40 hover:bg-white"
+        style={{ minHeight: "320px" }}
+      >
+        <div className="text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white">
+            <Plus className="h-6 w-6" />
+          </div>
+          <h2 className="font-serif text-lg text-text-primary">
+            Start a New Journey Log
+          </h2>
+          <p className="mt-2 text-xs text-text-body">
+            Begin a new adventure
+          </p>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href="/app/logs/new"
