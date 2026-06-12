@@ -146,9 +146,7 @@ export default function EntriesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link
-                        href={`/app/logs/${entry.journey_log}/entries/${entry.id}`}
-                      >
+                      <Link href={`/app/entries/${entry.id}/edit`}>
                         <Button
                           variant="ghost"
                           size="sm"
