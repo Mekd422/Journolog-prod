@@ -18,6 +18,7 @@ export default function SettingsPage() {
     bio: "",
     public_profile_slug: "",
   });
+  
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +26,6 @@ export default function SettingsPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [currentAvatar, setCurrentAvatar] = useState("");
 
-  // Initialize form with user data
   useEffect(() => {
     if (user) {
       setFormData({
@@ -35,7 +35,7 @@ export default function SettingsPage() {
       });
 
       if (user.avatar) {
-        setCurrentAvatar(pb.files.getUrl(user, user.avatar));
+        setCurrentAvatar(pb.files.getURL(user, user.avatar));
       }
     }
   }, [user]);
@@ -48,7 +48,6 @@ export default function SettingsPage() {
       ...prev,
       [name]: value,
     }));
-    // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -61,7 +60,6 @@ export default function SettingsPage() {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         setErrors((prev) => ({
           ...prev,
@@ -70,7 +68,6 @@ export default function SettingsPage() {
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setErrors((prev) => ({
           ...prev,
@@ -86,7 +83,6 @@ export default function SettingsPage() {
       };
       reader.readAsDataURL(file);
 
-      // Clear error
       if (errors.avatar) {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -120,13 +116,11 @@ export default function SettingsPage() {
         .collection("users")
         .update<User>(user.id, updateData);
 
-      // Update local state
       refresh();
       setSuccessMessage("Profile updated successfully!");
       setAvatarFile(null);
       setAvatarPreview("");
 
-      // Clear success message after 3 seconds
       setTimeout(() => {
         setSuccessMessage("");
       }, 3000);
@@ -171,14 +165,12 @@ export default function SettingsPage() {
 
       <div className="max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Avatar Section */}
           <div className="rounded-[8px] bg-white p-8 shadow-card">
             <h2 className="mb-6 font-serif text-xl text-text-primary">
               Profile Photo
             </h2>
 
             <div className="space-y-4">
-              {/* Current or Preview Avatar */}
               <div className="flex justify-center">
                 <div className="relative h-32 w-32 overflow-hidden rounded-full bg-black/5">
                   {avatarPreview ? (
