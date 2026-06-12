@@ -75,11 +75,9 @@ export default function MapPage() {
     };
   }, [user]);
 
-  // Initialize map when entries are loaded
   useEffect(() => {
     if (!mapContainer.current || !mapboxgl || entries.length === 0) return;
 
-    // Check for API token
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     if (!token) {
       setMapError(
@@ -91,7 +89,6 @@ export default function MapPage() {
     mapboxgl.accessToken = token;
 
     try {
-      // Calculate bounds from all entries
       const bounds = entries.reduce(
         (bounds, entry) => {
           return bounds.extend([entry.longitude, entry.latitude]);
@@ -102,7 +99,6 @@ export default function MapPage() {
         )
       );
 
-      // Initialize map
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/outdoors-v12",
@@ -110,7 +106,6 @@ export default function MapPage() {
         padding: 50,
       });
 
-      // Create popup instance
       popupRef.current = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false,
@@ -118,7 +113,6 @@ export default function MapPage() {
         offset: [0, -35],
       });
 
-      // Add markers for each entry
       markersRef.current = entries.map((entry) => {
         const el = document.createElement("div");
         el.className = "marker";
@@ -141,7 +135,6 @@ export default function MapPage() {
           .setLngLat([entry.longitude, entry.latitude])
           .addTo(map.current);
 
-        // Add click event to show popup
         el.addEventListener("click", () => {
           const html = `
             <div class="mapbox-popup">
@@ -155,9 +148,9 @@ export default function MapPage() {
                   day: "numeric",
                 })}
               </p>
-              <a href="/app/logs/${entry.journey_log}/entries/${entry.id}" 
+              <a href="/app/entries/${entry.id}/edit" 
                  style="display: inline-block; padding: 6px 12px; background-color: #c06a42; color: white; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: 500;">
-                View Entry
+                Edit Entry
               </a>
             </div>
           `;
@@ -168,7 +161,6 @@ export default function MapPage() {
             .addTo(map.current);
         });
 
-        // Change cursor on hover
         el.addEventListener("mouseenter", () => {
           el.style.filter = "drop-shadow(0 0 8px rgba(192, 106, 66, 0.6))";
         });
