@@ -9,7 +9,6 @@ import type { User } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
   const { user, refresh } = useAuth();
@@ -27,17 +26,21 @@ export default function SettingsPage() {
   const [currentAvatar, setCurrentAvatar] = useState("");
 
   useEffect(() => {
-    if (user) {
+    if (!user) return;
+
+    const timer = setTimeout(() => {
       setFormData({
         name: user.name || "",
-        bio: (user as any).bio || "",
-        public_profile_slug: (user as any).public_profile_slug || "",
+        bio: user.bio || "",
+        public_profile_slug: user.public_profile_slug || "",
       });
 
-      if (user.avatar) {
-        setCurrentAvatar(pb.files.getURL(user, user.avatar));
-      }
-    }
+      setCurrentAvatar(
+        user.avatar ? pb.files.getURL(user, user.avatar) : ""
+      );
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [user]);
 
   const handleInputChange = (
@@ -116,26 +119,34 @@ export default function SettingsPage() {
         .collection("users")
         .update<User>(user.id, updateData);
 
-      refresh();
+      await refresh();
       setSuccessMessage("Profile updated successfully!");
       setAvatarFile(null);
       setAvatarPreview("");
+      setCurrentAvatar(
+        updatedUser.avatar ? pb.files.getURL(updatedUser, updatedUser.avatar) : ""
+      );
 
       setTimeout(() => {
         setSuccessMessage("");
       }, 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Update error:", err);
 
-      if (err.data?.data) {
+      const e = err as { data?: { data?: Record<string, unknown> }; message?: string };
+      if (e.data?.data) {
         const fieldErrors: Record<string, string> = {};
-        Object.entries(err.data.data).forEach(([field, value]: any) => {
-          fieldErrors[field] = value.message || "Error in this field";
+        Object.entries(e.data.data).forEach(([field, value]) => {
+          const valObj = value as Record<string, unknown> | undefined;
+          const msg = valObj && typeof valObj === "object" && "message" in valObj
+            ? String((valObj as { message?: unknown }).message)
+            : undefined;
+          fieldErrors[field] = msg || "Error in this field";
         });
         setErrors(fieldErrors);
       } else {
         setErrors({
-          submit: err.message || "Failed to update profile",
+          submit: e.message || "Failed to update profile",
         });
       }
     } finally {
@@ -178,6 +189,7 @@ export default function SettingsPage() {
                       src={avatarPreview}
                       alt="Avatar preview"
                       fill
+                      sizes="128px"
                       className="object-cover"
                     />
                   ) : currentAvatar ? (
@@ -185,6 +197,7 @@ export default function SettingsPage() {
                       src={currentAvatar}
                       alt="Current avatar"
                       fill
+                      sizes="128px"
                       className="object-cover"
                     />
                   ) : (
@@ -197,7 +210,6 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* File Input */}
               <div className="space-y-2">
                 <label
                   htmlFor="avatar-input"
@@ -225,7 +237,6 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Profile Info Section */}
           <div className="rounded-[8px] bg-white p-8 shadow-card space-y-6">
             <h2 className="font-serif text-xl text-text-primary">
               Profile Information
@@ -262,14 +273,12 @@ export default function SettingsPage() {
               disabled={isLoading}
             />
 
-            {/* Submit Error */}
             {errors.submit && (
               <div className="rounded-[4px] bg-red-50 p-4 text-sm text-red-600">
                 {errors.submit}
               </div>
             )}
 
-            {/* Success Message */}
             {successMessage && (
               <div className="flex items-center gap-2 rounded-[4px] bg-green-50 p-4 text-sm text-green-700">
                 <Check className="h-5 w-5" />

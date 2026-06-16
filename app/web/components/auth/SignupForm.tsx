@@ -28,6 +28,9 @@ export function SignupForm() {
         passwordConfirm: password,
       });
       await pb.collection("users").authWithPassword(email, password);
+      if (typeof pb.authStore.save === "function") {
+        pb.authStore.save(pb.authStore.token, pb.authStore.record);
+      }
       router.push("/app/logs");
       router.refresh();
     } catch {

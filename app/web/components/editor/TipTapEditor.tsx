@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 interface TipTapEditorProps {
   content?: Record<string, unknown>;
-  onChange?: (content: Record<string, unknown>) => void;
+  onChange?: (json: Record<string, unknown>, html: string) => void;
   journeyLogId: string;
 }
 
@@ -46,32 +46,36 @@ export function TipTapEditor({ content, onChange, journeyLogId }: TipTapEditorPr
       },
     },
     onUpdate: ({ editor: currentEditor }) => {
-      onChange?.(currentEditor.getJSON() as Record<string, unknown>);
+      onChange?.(
+        currentEditor.getJSON() as Record<string, unknown>,
+        currentEditor.getHTML()
+      );
     },
   });
 
-  // Fixed synchronization hook
   useEffect(() => {
     if (!editor || editor.isDestroyed || !content) return;
 
-    // Avoid syncing if the incoming content is an empty object `{}` 
     if (Object.keys(content).length === 0) return;
 
     const current = JSON.stringify(editor.getJSON());
     const incoming = JSON.stringify(content);
     
     if (current !== incoming) {
-      // Use queueMicrotask or setTimeout to defer setting content, 
-      // preventing conflicts with active schema/image update transactions
       queueMicrotask(() => {
         if (!editor.isDestroyed) {
-          editor.commands.setContent(content, false); // false prevents resetting the cursor position unnecessarily
+          editor.commands.setContent(content);
         }
       });
     }
   }, [content, editor]);
 
   const uploadImage = useCallback(async () => {
+    const userId = pb.authStore.model?.id ?? pb.authStore.record?.id;
+    if (!pb.authStore.isValid || !userId) {
+      alert("Please sign in first");
+      return;
+    }
     if (!editor) return;
 
     const input = document.createElement("input");
@@ -83,19 +87,33 @@ export function TipTapEditor({ content, onChange, journeyLogId }: TipTapEditorPr
 
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("user", pb.authStore.record?.id ?? "");
+      formData.append("user", userId);
       formData.append("journey_log", journeyLogId);
+      formData.append("type", "image");
+
+      console.log("journeyLogId:", journeyLogId);
+console.log("token:", pb.authStore.token);
+console.log("model:", pb.authStore.model);
+console.log("record:", pb.authStore.record);
+console.log("isValid:", pb.authStore.isValid);
 
       try {
-        const record = await pb.collection("media").create(formData);
-        const url = pb.files.getURL(record, record.file);
-        
-        // Focus and insert image node
-        editor.chain().focus().setImage({ src: url }).run();
-      } catch (err) {
-        console.error("Upload error:", err);
-        alert("Could not upload image. Please try again.");
-      }
+  const record = await pb.collection("media").create(formData);
+  const url = pb.files.getURL(record, record.file);
+
+  editor.chain().focus().setImage({ src: url }).run();
+} catch (err: any) {
+  console.error("Upload error:", err);
+
+  if (err.response) {
+    console.error(
+      "PocketBase response:",
+      JSON.stringify(err.response, null, 2)
+    );
+  }
+
+  alert("Could not upload image. Please try again.");
+}
     };
     input.click();
   }, [editor, journeyLogId]);

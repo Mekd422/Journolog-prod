@@ -65,7 +65,7 @@ export default function MediaPage() {
   }, [user]);
 
   const getFileUrl = (record: Media, filename: string) => {
-    return pb.files.getUrl(record, filename);
+    return pb.files.getURL(record, filename);
   };
 
   return (
@@ -104,7 +104,6 @@ export default function MediaPage() {
               onMouseEnter={() => setHoveredId(item.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
-              {/* Image Container */}
               <div className="relative aspect-square w-full overflow-hidden bg-black/5">
                 <Image
                   src={getFileUrl(item, item.file)}
@@ -115,7 +114,6 @@ export default function MediaPage() {
                 />
               </div>
 
-              {/* Overlay on Hover */}
               {hoveredId === item.id && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 transition-opacity backdrop-blur-sm p-4">
                   <div className="text-center text-white space-y-3">

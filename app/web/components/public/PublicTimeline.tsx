@@ -23,7 +23,7 @@ export function PublicTimeline({ entries }: { entries: Entry[] }) {
             </p>
           )}
           <div className="mt-6 max-w-3xl">
-            <EntryContent content={entry.content} />
+            <EntryContent content={entry.body_json} />
           </div>
         </article>
       ))}

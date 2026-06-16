@@ -1,16 +1,12 @@
+"use client";
+
 import { LogsDashboard } from "@/components/logs/LogsDashboard";
 import { PublicProfileButton } from "@/components/logs/JourneyLogCard";
-import { pb } from "@/lib/pocketbase";
+import { useAuth } from "@/context/AuthContext";
 
-export default async function LogsPage() {
-  let publicProfileSlug: string | undefined;
-
-  try {
-    const user = await pb.collection("users").getOne(pb.authStore.model?.id);
-    publicProfileSlug = user.public_profile_slug;
-  } catch {
-    // User not found or error fetching
-  }
+export default function LogsPage() {
+  const { user } = useAuth();
+  const publicProfileSlug = user?.public_profile_slug;
 
   return (
     <main className="px-8 py-10 lg:px-12">

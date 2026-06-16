@@ -45,7 +45,6 @@ export function DiscoverFilters({
   return (
     <form onSubmit={handleSearch} className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row">
-        {/* Search Input */}
         <div className="flex-1 relative">
           <input
             type="text"
@@ -57,7 +56,6 @@ export function DiscoverFilters({
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
         </div>
 
-        {/* Region Filter */}
         <select
           value={region}
           onChange={(e) => setRegion(e.target.value)}
@@ -71,7 +69,6 @@ export function DiscoverFilters({
           ))}
         </select>
 
-        {/* Tag Filter */}
         <select
           value={tag}
           onChange={(e) => setTag(e.target.value)}
@@ -85,7 +82,6 @@ export function DiscoverFilters({
           ))}
         </select>
 
-        {/* Search Button */}
         <button
           type="submit"
           className="rounded-md bg-accent px-6 py-2 text-sm font-medium text-white hover:bg-accent/90"
@@ -94,7 +90,6 @@ export function DiscoverFilters({
         </button>
       </div>
 
-      {/* Clear Filters */}
       {(query || region || tag) && (
         <button
           type="button"

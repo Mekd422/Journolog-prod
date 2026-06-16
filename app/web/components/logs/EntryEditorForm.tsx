@@ -25,37 +25,41 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [showOnMap, setShowOnMap] = useState(true);
-  const [content, setContent] = useState<Record<string, unknown>>({
+  const [bodyJson, setBodyJson] = useState<Record<string, unknown>>({
     type: "doc",
     content: [],
   });
+  const [bodyHtml, setBodyHtml] = useState<string>("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Mapbox location search state
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<MapboxGeocodingResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const searchTimeout = useRef<any>(null);
 
-  // Debounced search
   useEffect(() => {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
     if (!searchQuery.trim()) {
-      setSuggestions([]);
+      if (suggestions.length > 0) {
+        setTimeout(() => setSuggestions([]), 0);
+      }
       return;
     }
 
+    let mounted = true;
     setIsSearching(true);
     searchTimeout.current = setTimeout(async () => {
       const results = await geocodePlace(searchQuery);
+      if (!mounted) return;
       setSuggestions(results);
       setIsSearching(false);
     }, 400);
 
     return () => {
+      mounted = false;
       if (searchTimeout.current) clearTimeout(searchTimeout.current);
     };
   }, [searchQuery]);
@@ -85,7 +89,8 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
         title: title.trim(),
         entry_date: entryDate,
         show_on_map: showOnMap,
-        content,
+        body_json: bodyJson,
+        body_html: bodyHtml,
         status: "published",
         journey_log: journeyLogId,
         user: pb.authStore.record?.id,
@@ -117,7 +122,8 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
         title: title.trim() || "Untitled Draft",
         entry_date: entryDate,
         show_on_map: showOnMap,
-        content,
+        body_json: bodyJson,
+        body_html: bodyHtml,
         status: "draft",
         journey_log: journeyLogId,
         user: pb.authStore.record?.id,
@@ -151,7 +157,14 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
           className="w-full border-0 bg-transparent font-serif text-4xl text-text-primary outline-none placeholder:text-black/20"
         />
 
-        <TipTapEditor content={content} onChange={setContent} />
+        <TipTapEditor
+          content={bodyJson}
+          onChange={(json, html) => {
+            setBodyJson(json);
+            setBodyHtml(html);
+          }}
+          journeyLogId={journeyLogId}
+        />
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
@@ -197,7 +210,6 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
               onChange={(event) => setEndDate(event.target.value)}
             />
 
-            {/* Location Search */}
             <div className="space-y-1.5 relative">
               <label className="block text-sm font-medium text-text-primary">
                 Location
@@ -221,7 +233,6 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
                 )}
               </div>
 
-              {/* Location Display */}
               {locationName && (
                 <div className="mt-2 flex items-center justify-between gap-2 rounded-[6px] bg-green-50 px-3 py-2 text-sm">
                   <span className="flex items-center gap-1.5 text-green-700">
@@ -238,7 +249,6 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
                 </div>
               )}
 
-              {/* Suggestions Dropdown */}
               {showSuggestions && suggestions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 z-10 mt-1 max-h-40 overflow-y-auto rounded-[6px] border border-gray-200 bg-white shadow-lg">
                   {suggestions.map((suggestion) => (

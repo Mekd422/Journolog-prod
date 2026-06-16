@@ -16,7 +16,6 @@ export function JourneyMap({ entries }: JourneyMapProps) {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Get entries with coordinates that should be shown on map
     const mappedEntries = entries.filter(
       (e) => e.show_on_map && e.latitude != null && e.longitude != null
     );
@@ -25,7 +24,6 @@ export function JourneyMap({ entries }: JourneyMapProps) {
       return;
     }
 
-    // Initialize map
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     if (!token) {
       console.error("Mapbox token not configured");
@@ -44,12 +42,10 @@ export function JourneyMap({ entries }: JourneyMapProps) {
     mapRef.current = map;
 
     map.on("load", () => {
-      // Create coordinates array for polyline
       const coordinates = mappedEntries.map(
         (e) => [e.longitude!, e.latitude!] as [number, number]
       );
 
-      // Add markers
       mappedEntries.forEach((entry, index) => {
         const el = document.createElement("div");
         el.className =
@@ -69,7 +65,6 @@ export function JourneyMap({ entries }: JourneyMapProps) {
           .addTo(map);
       });
 
-      // Add polyline
       if (coordinates.length > 1) {
         map.addSource("route", {
           type: "geojson",
@@ -99,7 +94,6 @@ export function JourneyMap({ entries }: JourneyMapProps) {
         });
       }
 
-      // Fit bounds
       const bounds = new mapboxgl.LngLatBounds();
       coordinates.forEach((coord) => bounds.extend(coord));
       map.fitBounds(bounds, { padding: 50 });

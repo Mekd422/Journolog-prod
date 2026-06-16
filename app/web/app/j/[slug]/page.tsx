@@ -29,7 +29,7 @@ export async function generateMetadata({
     }
 
     const log = logs.items[0];
-    const coverUrl = log.cover ? getFileUrl(log, log.cover) : null;
+    const coverUrl = log.cover_image ? getFileUrl(log, log.cover_image) : null;
 
     return {
       title: `${log.title} | Journolog`,
@@ -78,7 +78,7 @@ export default async function PublicJourneyPage({
     notFound();
   }
 
-  const coverUrl = log.cover ? getFileUrl(log, log.cover) : null;
+  const coverUrl = log.cover_image ? getFileUrl(log, log.cover_image) : null;
 
   return (
     <main className="min-h-screen bg-background">
@@ -101,7 +101,7 @@ export default async function PublicJourneyPage({
         <PublicHero
           title={log.title}
           description={log.description}
-          countryRegion={log.country_region}
+          countryRegion={[log.country, log.region].filter(Boolean).join(", ")}
           coverUrl={coverUrl}
         />
 

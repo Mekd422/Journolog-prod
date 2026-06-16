@@ -24,36 +24,42 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
   const [latitude, setLatitude] = useState(entry.latitude ?? null);
   const [longitude, setLongitude] = useState(entry.longitude ?? null);
   const [showOnMap, setShowOnMap] = useState(entry.show_on_map ?? true);
-  const [content, setContent] = useState(entry.content || {});
-  const [status, setStatus] = useState(entry.status);
+  const [bodyJson, setBodyJson] = useState(entry.body_json || {});
+  const [bodyHtml, setBodyHtml] = useState(entry.body_html || "");
+  const [status, setStatus] = useState<'draft' | 'published'>(
+    (entry.status as 'draft' | 'published') ?? 'draft'
+  );
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // Mapbox location search state
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<MapboxGeocodingResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const searchTimeout = useRef<any>(null);
 
-  // Debounced search
   useEffect(() => {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
     if (!searchQuery.trim()) {
-      setSuggestions([]);
+      if (suggestions.length > 0) {
+        setTimeout(() => setSuggestions([]), 0);
+      }
       return;
     }
 
+    let mounted = true;
     setIsSearching(true);
     searchTimeout.current = setTimeout(async () => {
       const results = await geocodePlace(searchQuery);
+      if (!mounted) return;
       setSuggestions(results);
       setIsSearching(false);
     }, 400);
 
     return () => {
+      mounted = false;
       if (searchTimeout.current) clearTimeout(searchTimeout.current);
     };
   }, [searchQuery]);
@@ -83,7 +89,8 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
         title: title.trim() || "Untitled",
         entry_date: entryDate,
         show_on_map: showOnMap,
-        content,
+        body_json: bodyJson,
+        body_html: bodyHtml,
         status,
       };
 
@@ -131,7 +138,14 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
           className="w-full border-0 bg-transparent font-serif text-4xl text-text-primary outline-none placeholder:text-black/20"
         />
 
-        <TipTapEditor content={content} onChange={setContent} journeyLogId={entry.journey_log}/>
+        <TipTapEditor
+          content={bodyJson}
+          onChange={(json, html) => {
+            setBodyJson(json);
+            setBodyHtml(html);
+          }}
+          journeyLogId={entry.journey_log}
+        />
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
@@ -170,7 +184,7 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
               </label>
               <select
                 value={status}
-                onChange={(event) => setStatus(event.target.value as any)}
+                onChange={(event) => setStatus(event.target.value as 'draft' | 'published')}
                 className="w-full rounded-[6px] border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
               >
                 <option value="draft">Draft</option>
@@ -192,7 +206,6 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
               onChange={(event) => setEndDate(event.target.value)}
             />
 
-            {/* Location Search */}
             <div className="space-y-1.5 relative">
               <label className="block text-sm font-medium text-text-primary">
                 Location
@@ -216,7 +229,6 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
                 )}
               </div>
 
-              {/* Location Display */}
               {locationName && (
                 <div className="mt-2 flex items-center justify-between gap-2 rounded-[6px] bg-green-50 px-3 py-2 text-sm">
                   <span className="flex items-center gap-1.5 text-green-700">
@@ -233,7 +245,6 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
                 </div>
               )}
 
-              {/* Suggestions Dropdown */}
               {showSuggestions && suggestions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 z-10 mt-1 max-h-40 overflow-y-auto rounded-[6px] border border-gray-200 bg-white shadow-lg">
                   {suggestions.map((suggestion) => (
@@ -274,7 +285,6 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
         </section>
       </aside>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="rounded-[8px] bg-white p-6 shadow-lg max-w-sm mx-4">

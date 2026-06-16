@@ -102,7 +102,6 @@ export function LogsDashboard() {
   return (
     <>
       <div className="mb-8 space-y-4">
-        {/* Tabs */}
         <div className="flex border-b border-gray-200">
           <button
             onClick={() => setActiveTab("all")}
@@ -126,7 +125,6 @@ export function LogsDashboard() {
           </button>
         </div>
 
-        {/* Controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-sm text-text-body">Sort by</span>

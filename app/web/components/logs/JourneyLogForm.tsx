@@ -16,7 +16,8 @@ export function JourneyLogForm() {
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [countryRegion, setCountryRegion] = useState("");
+  const [country, setCountry] = useState("");
+  const [region, setRegion] = useState("");
   const [visibility, setVisibility] = useState<"private" | "public">("private");
   const [cover, setCover] = useState<File | null>(null);
   const [error, setError] = useState("");
@@ -37,10 +38,9 @@ export function JourneyLogForm() {
       if (description.trim()) formData.append("description", description.trim());
       if (startDate) formData.append("start_date", startDate);
       if (endDate) formData.append("end_date", endDate);
-      if (countryRegion.trim()) {
-        formData.append("country_region", countryRegion.trim());
-      }
-      if (cover) formData.append("cover", cover);
+      if (country.trim()) formData.append("country", country.trim());
+      if (region.trim()) formData.append("region", region.trim());
+      if (cover) formData.append("cover_image", cover);
 
       const record = await pb.collection("journey_logs").create(formData);
       router.push(`/app/logs/${record.id}`);
@@ -83,12 +83,21 @@ export function JourneyLogForm() {
         />
       </div>
 
-      <Input
-        label="Country / Region"
-        value={countryRegion}
-        onChange={(event) => setCountryRegion(event.target.value)}
-        placeholder="Thailand"
-      />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input
+          label="Country"
+          value={country}
+          onChange={(event) => setCountry(event.target.value)}
+          placeholder="Thailand"
+        />
+        <Input
+          label="Region"
+          value={region}
+          onChange={(event) => setRegion(event.target.value)}
+          placeholder="Northern Thailand"
+        />
+      </div>
+
 
       <fieldset className="space-y-3">
         <legend className="text-sm font-medium text-text-primary">

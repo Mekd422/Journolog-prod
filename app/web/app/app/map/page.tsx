@@ -8,13 +8,8 @@ import { useAuth } from "@/context/AuthContext";
 import type { Entry } from "@/types";
 import { Button } from "@/components/ui/Button";
 
-// Dynamic import for mapbox-gl to avoid SSR issues
-let mapboxgl: any = null;
-if (typeof window !== "undefined") {
-  import("mapbox-gl").then((mod) => {
-    mapboxgl = mod.default;
-  });
-}
+// Import Mapbox styles explicitly to prevent layout breaking
+import "mapbox-gl/dist/mapbox-gl.css";
 
 interface GeoEntry extends Entry {
   latitude: number;
@@ -24,14 +19,35 @@ interface GeoEntry extends Entry {
 export default function MapPage() {
   const { user } = useAuth();
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<any>(null);
+  const map = useRef<any>(null); // Kept as any to ease raw Mapbox manipulation
   const markersRef = useRef<any[]>([]);
   const popupRef = useRef<any>(null);
+  const mapboxglRef = useRef<(typeof import("mapbox-gl"))['default'] | null>(null);
 
   const [entries, setEntries] = useState<GeoEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [mapError, setMapError] = useState("");
+
+  const tokenPresent = Boolean(process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let cancelled = false;
+    import("mapbox-gl").then((mod) => {
+      if (!cancelled) {
+        mapboxglRef.current = mod.default;
+        if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
+          setMapError("Mapbox token not configured. Please set NEXT_PUBLIC_MAPBOX_TOKEN in your environment.");
+        }
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const userId = user?.id;
@@ -75,24 +91,20 @@ export default function MapPage() {
     };
   }, [user]);
 
+  // Handle map generation and markers placement
   useEffect(() => {
-    if (!mapContainer.current || !mapboxgl || entries.length === 0) return;
+    if (!mapContainer.current || !mapboxglRef.current || entries.length === 0) return;
 
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-    if (!token) {
-      setMapError(
-        "Mapbox token not configured. Please set NEXT_PUBLIC_MAPBOX_TOKEN in your environment."
-      );
-      return;
-    }
+    if (!token) return;
 
-    mapboxgl.accessToken = token;
+    const mapboxgl = mapboxglRef.current;
+    mapboxgl.accessToken = token; // Fixed initialization order issue
 
     try {
+      // Calculate map viewport boundary encapsulating all geographical entry coordinates
       const bounds = entries.reduce(
-        (bounds, entry) => {
-          return bounds.extend([entry.longitude, entry.latitude]);
-        },
+        (acc, entry) => acc.extend([entry.longitude, entry.latitude]),
         new mapboxgl.LngLatBounds(
           [entries[0].longitude, entries[0].latitude],
           [entries[0].longitude, entries[0].latitude]
@@ -102,8 +114,8 @@ export default function MapPage() {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/outdoors-v12",
-        bounds: bounds.toArray(),
-        padding: 50,
+        bounds: bounds.toArray() as [[number, number], [number, number]],
+        fitBoundsOptions: { padding: 50 },
       });
 
       popupRef.current = new mapboxgl.Popup({
@@ -116,20 +128,16 @@ export default function MapPage() {
       markersRef.current = entries.map((entry) => {
         const el = document.createElement("div");
         el.className = "marker";
-        el.style.backgroundImage = "url(/marker-icon.svg)";
         el.style.width = "32px";
         el.style.height = "40px";
-        el.style.backgroundSize = "contain";
         el.style.cursor = "pointer";
         el.style.position = "relative";
-
-        // Create a div marker if image doesn't exist
-        if (!el.style.backgroundImage) {
-          el.style.backgroundColor = "#c06a42";
-          el.style.borderRadius = "50%";
-          el.style.border = "3px solid white";
-          el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
-        }
+        
+        // Fallback default stylings if background vector asset doesn't exist
+        el.style.backgroundColor = "#c06a42";
+        el.style.borderRadius = "50%";
+        el.style.border = "3px solid white";
+        el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
 
         const marker = new mapboxgl.Marker(el)
           .setLngLat([entry.longitude, entry.latitude])
@@ -137,7 +145,7 @@ export default function MapPage() {
 
         el.addEventListener("click", () => {
           const html = `
-            <div class="mapbox-popup">
+            <div class="mapbox-popup" style="padding: 4px;">
               <h3 style="margin: 0 0 8px 0; font-weight: 600; font-size: 14px; font-family: Georgia, serif;">
                 ${entry.title}
               </h3>
@@ -175,7 +183,7 @@ export default function MapPage() {
       return () => {
         markersRef.current.forEach((marker) => marker.remove());
         if (popupRef.current) popupRef.current.remove();
-        map.current?.remove();
+        if (map.current) map.current.remove();
       };
     } catch (err) {
       console.error("Map initialization error:", err);
@@ -205,7 +213,7 @@ export default function MapPage() {
         <div className="flex h-full items-center justify-center bg-white">
           <div className="text-center">
             <p className="text-text-body mb-4">
-              You haven't created any geotagged entries yet.
+              You haven&apos;t created any geotagged entries yet.
             </p>
             <Link href="/app/logs">
               <Button variant="outline">View Journey Logs</Button>

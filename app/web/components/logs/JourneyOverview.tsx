@@ -16,8 +16,9 @@ interface JourneyOverviewProps {
 }
 
 export function JourneyOverview({ log, entries }: JourneyOverviewProps) {
-  const coverUrl = log.cover ? getFileUrl(log, log.cover) : null;
+  const coverUrl = log.cover_image ? getFileUrl(log, log.cover_image) : null;
   const dateRange = formatDateRange(log.start_date, log.end_date);
+  const locationText = [log.country, log.region].filter(Boolean).join(", ");
 
   return (
     <div className="space-y-8">
@@ -47,8 +48,8 @@ export function JourneyOverview({ log, entries }: JourneyOverviewProps) {
               {dateRange ? (
                 <p className="text-sm text-text-body">{dateRange}</p>
               ) : null}
-              {log.country_region ? (
-                <p className="mt-1 text-sm text-text-body">{log.country_region}</p>
+              {locationText ? (
+                <p className="mt-1 text-sm text-text-body">{locationText}</p>
               ) : null}
               {log.description ? (
                 <p className="mt-4 max-w-3xl text-text-body">{log.description}</p>
@@ -103,10 +104,10 @@ export function JourneyOverview({ log, entries }: JourneyOverviewProps) {
                     <h3 className="mt-1 font-serif text-xl text-text-primary">
                       {entry.title}
                     </h3>
-                    {entry.location ? (
+                    {entry.location_name ? (
                       <p className="mt-2 flex items-center gap-1.5 text-sm text-text-body">
                         <MapPin className="h-4 w-4" />
-                        {entry.location}
+                        {entry.location_name}
                       </p>
                     ) : null}
                   </div>

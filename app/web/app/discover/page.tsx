@@ -33,7 +33,7 @@ export default async function DiscoverPage({
   }
 
   if (region) {
-    filter += ` && country_region = "${region}"`;
+    filter += ` && (country = "${region}" || region = "${region}")`;
   }
 
   if (tag) {
@@ -45,7 +45,6 @@ export default async function DiscoverPage({
     sort: "-updated",
   }) as JourneyLog[];
 
-  // Get unique regions for filters
   const allLogs = await pb.collection("journey_logs").getFullList({
     filter: 'status = "public"',
   }) as JourneyLog[];
@@ -53,7 +52,7 @@ export default async function DiscoverPage({
   const regions = Array.from(
     new Set(
       allLogs
-        .map((l) => l.country_region)
+        .flatMap((l) => [l.country, l.region])
         .filter((value): value is string => Boolean(value))
     )
   ).sort();
@@ -202,7 +201,7 @@ function JourneyCard({
   log: JourneyLog;
   featured?: boolean;
 }) {
-  const coverUrl = log.cover ? pb.files.getURL(log, log.cover) : null;
+  const coverUrl = log.cover_image ? pb.files.getURL(log, log.cover_image) : null;
 
   return (
     <Link href={`/j/${log.slug}`}>
@@ -235,11 +234,14 @@ function JourneyCard({
             {log.title}
           </h3>
 
-          {log.country_region && (
-            <p className="mt-2 text-sm text-text-body">
-              📍 {log.country_region}
-            </p>
-          )}
+          {(() => {
+            const locationText = [log.country, log.region].filter(Boolean).join(", ");
+            return locationText && (
+              <p className="mt-2 text-sm text-text-body">
+                📍 {locationText}
+              </p>
+            );
+          })()}
 
           {log.description && (
             <p className="mt-3 line-clamp-2 text-sm text-text-body">

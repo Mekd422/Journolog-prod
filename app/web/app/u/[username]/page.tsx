@@ -49,7 +49,7 @@ export default async function PublicProfilePage({
 
   const logs = (await pb.collection("journey_logs").getFullList({
     filter: `user = "${user.id}" && status = "public"`,
-    sort: "-updated_at",
+    sort: "-updated",
   })) as JourneyLog[];
 
   const avatarUrl = user.avatar
@@ -122,8 +122,8 @@ export default async function PublicProfilePage({
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {logs.map((log) => {
-                const coverUrl = log.cover
-                  ? pb.files.getURL(log, log.cover)
+                const coverUrl = log.cover_image
+                  ? pb.files.getURL(log, log.cover_image)
                   : null;
 
                 return (
@@ -148,11 +148,14 @@ export default async function PublicProfilePage({
                         {log.title}
                       </h3>
 
-                      {log.country_region && (
-                        <p className="mt-2 text-sm text-text-body">
-                          {log.country_region}
-                        </p>
-                      )}
+                      {(() => {
+                        const locationText = [log.country, log.region].filter(Boolean).join(", ");
+                        return locationText && (
+                          <p className="mt-2 text-sm text-text-body">
+                            📍 {locationText}
+                          </p>
+                        );
+                      })()}
 
                       {log.description && (
                         <p className="mt-3 line-clamp-2 text-sm text-text-body">

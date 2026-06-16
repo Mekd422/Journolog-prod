@@ -16,8 +16,9 @@ interface JourneyLogCardProps {
 }
 
 export function JourneyLogCard({ log }: JourneyLogCardProps) {
-  const coverUrl = log.cover ? getFileUrl(log, log.cover, { thumb: "400x240" }) : null;
+  const coverUrl = log.cover_image ? getFileUrl(log, log.cover_image, { thumb: "400x240" }) : null;
   const dateRange = formatDateRange(log.start_date, log.end_date);
+  const locationText = [log.country, log.region].filter(Boolean).join(", ");
 
   return (
     <article className="flex items-stretch gap-5 rounded-[8px] bg-white p-5 shadow-card">
@@ -46,8 +47,8 @@ export function JourneyLogCard({ log }: JourneyLogCardProps) {
           {dateRange ? (
             <p className="text-sm text-text-body">{dateRange}</p>
           ) : null}
-          {log.country_region ? (
-            <p className="mt-1 text-sm text-text-body">{log.country_region}</p>
+          {locationText ? (
+            <p className="mt-1 text-sm text-text-body">{locationText}</p>
           ) : null}
           {log.description ? (
             <p className="mt-2 line-clamp-2 text-sm text-text-body">
@@ -81,10 +82,11 @@ export function JourneyLogCard({ log }: JourneyLogCardProps) {
 }
 
 export function JourneyLogGridCard({ log }: JourneyLogCardProps) {
-  const coverUrl = log.cover ? getFileUrl(log, log.cover, { thumb: "400x240" }) : null;
+  const coverUrl = log.cover_image ? getFileUrl(log, log.cover_image, { thumb: "400x240" }) : null;
   const dateRange = formatDateRange(log.start_date, log.end_date);
   const [entryCount, setEntryCount] = useState(0);
   const [imageError, setImageError] = useState(false);
+  const locationText = [log.country, log.region].filter(Boolean).join(", ");
 
   useEffect(() => {
     async function loadEntryCount() {
@@ -100,10 +102,9 @@ export function JourneyLogGridCard({ log }: JourneyLogCardProps) {
     loadEntryCount();
   }, [log.id]);
 
-  // Debug logging
   useEffect(() => {
-    if (log.cover) {
-      console.log(`Cover for ${log.title}:`, { cover: log.cover, url: coverUrl });
+    if (log.cover_image) {
+      console.log(`Cover for ${log.title}:`, { cover: log.cover_image, url: coverUrl });
     }
   }, [log, coverUrl]);
 
@@ -141,9 +142,9 @@ export function JourneyLogGridCard({ log }: JourneyLogCardProps) {
             </p>
           )}
 
-          {log.country_region && (
+          {locationText && (
             <p className="mt-2 text-sm text-text-body">
-              {log.country_region}
+              {locationText}
             </p>
           )}
 
@@ -245,7 +246,7 @@ export function PublicProfileButton({ slug }: { slug?: string }) {
   if (!slug) return null;
 
   return (
-    <a href={`/j/${slug}`} target="_blank" rel="noreferrer">
+    <a href={`/u/${slug}`} target="_blank" rel="noreferrer">
       <Button variant="outline" size="sm">
         <ExternalLink className="h-4 w-4" />
         View Public Profile
