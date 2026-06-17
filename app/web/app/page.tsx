@@ -95,11 +95,18 @@ export default function HomePage() {
             A quiet, linear space to preserve your adventures for yourself, and easily share them with the world.
           </p>
           <div className="mt-8">
-            <Link href="/signup">
-              <button className="bg-[#BA4A29] text-white text-base font-medium px-8 py-3.5 rounded-md hover:bg-[#a33f21] transition shadow-md">
-                Create a Free Journal
-              </button>
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/signup">
+                <button className="bg-[#BA4A29] text-white text-base font-medium px-8 py-3.5 rounded-md hover:bg-[#a33f21] transition shadow-md">
+                  Create a Free Journal
+                </button>
+              </Link>
+              <Link href="/discover">
+                <button className="border border-gray-200 text-gray-800 text-base font-medium px-6 py-3 rounded-md hover:bg-gray-50 transition">
+                  Discover Public Logs
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
         
