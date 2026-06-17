@@ -48,6 +48,9 @@ export interface Entry extends RecordModel {
   latitude?: number;
   longitude?: number;
   posted_via?: "web" | "email";
+  tags?: string[];
+  excerpt?: string;
+  cover_image?: string;
 }
 
 export interface Media extends RecordModel {
