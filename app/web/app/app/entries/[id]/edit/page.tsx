@@ -25,7 +25,9 @@ export default function EditEntryPage({
   useEffect(() => {
     async function loadEntry() {
       try {
-        const record = await pb.collection("entries").getOne(entryId);
+        const record = await pb.collection("entries").getOne(entryId, {
+          expand: "tags",
+        });
         setEntry(record as Entry);
       } catch (err) {
         console.error("Error loading entry:", err);
