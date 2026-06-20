@@ -56,7 +56,7 @@ function InteractiveHeroImage() {
           className="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur-md p-6 rounded-xl border border-white/20 max-w-sm hidden sm:block shadow-xl"
         >
           <span className="text-xs font-semibold uppercase tracking-wider text-[#BA4A29]">Live Stream</span>
-          <p className="font-serif text-lg text-gray-900 mt-1">"Watching the mist rise over the valley peaks from the morning express..."</p>
+          <p className="font-serif text-lg text-gray-900 mt-1">&ldquo;Watching the mist rise over the valley peaks from the morning express...&rdquo;</p>
         </motion.div>
       </motion.div>
     </div>
@@ -130,7 +130,7 @@ export default function HomePage() {
               <span>B</span><span>I</span><span>U</span><span className="ml-auto">The Dolomites, Italy</span>
             </div>
             <p className="font-serif text-sm leading-relaxed text-gray-800">
-              Woke up to mist rolling over the peaks. There's something humbling about standing in front of mountains that have been here for millions of years...
+              Woke up to mist rolling over the peaks. There&apos;s something humbling about standing in front of mountains that have been here for millions of years...
             </p>
           </div>
         </div>
@@ -139,7 +139,7 @@ export default function HomePage() {
           <div className="max-w-sm mb-8">
             <h3 className="font-serif text-2xl mb-3 text-gray-900">Email to publish. Effortless.</h3>
             <p className="text-sm text-gray-600 leading-relaxed">
-              Send photos, videos, and notes directly to your unique email address and we'll add them to your log dynamically.
+              Send photos, videos, and notes directly to your unique email address and we&apos;ll add them to your log dynamically.
             </p>
           </div>
           <div className="flex items-center justify-center gap-4 bg-[#FAF8F5] rounded-xl p-6 border border-gray-200/60">

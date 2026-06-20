@@ -97,7 +97,7 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
         data: {
           type: "FeatureCollection",
           features,
-        } as any,
+        } as GeoJSON.FeatureCollection,
         cluster: true,
         clusterMaxZoom: 14,
         clusterRadius: 50,
@@ -164,7 +164,7 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
         source.getClusterExpansionZoom(clusterId, (err, zoom) => {
           if (err) return;
           map.easeTo({
-            center: (features[0].geometry as any).coordinates,
+            center: (features[0].geometry as GeoJSON.Point).coordinates as [number, number],
             zoom: zoom ?? 10,
           });
         });
@@ -173,7 +173,7 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
       // Unclustered point popup
       map.on("click", "unclustered-point", (e) => {
         if (!e.features || !e.features.length) return;
-        const coordinates = (e.features[0].geometry as any).coordinates.slice();
+        const coordinates = (e.features[0].geometry as GeoJSON.Point).coordinates.slice() as [number, number];
         const props = e.features[0].properties;
         if (!props) return;
 
@@ -279,7 +279,7 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
       source.setData({
         type: "FeatureCollection",
         features,
-      } as any);
+      } as GeoJSON.FeatureCollection);
     };
 
     if (map.isStyleLoaded()) {

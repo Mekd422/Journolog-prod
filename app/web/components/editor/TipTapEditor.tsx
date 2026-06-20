@@ -98,22 +98,22 @@ console.log("record:", pb.authStore.record);
 console.log("isValid:", pb.authStore.isValid);
 
       try {
-  const record = await pb.collection("media").create(formData);
-  const url = pb.files.getURL(record, record.file);
+        const record = await pb.collection("media").create(formData);
+        const url = pb.files.getURL(record, record.file);
+        editor.chain().focus().setImage({ src: url }).run();
+      } catch (err) {
+        const error = err as { response?: Record<string, unknown> };
+        console.error("Upload error:", error);
 
-  editor.chain().focus().setImage({ src: url }).run();
-} catch (err: any) {
-  console.error("Upload error:", err);
+        if (error.response) {
+          console.error(
+            "PocketBase response:",
+            JSON.stringify(error.response, null, 2)
+          );
+        }
 
-  if (err.response) {
-    console.error(
-      "PocketBase response:",
-      JSON.stringify(err.response, null, 2)
-    );
-  }
-
-  alert("Could not upload image. Please try again.");
-}
+        alert("Could not upload image. Please try again.");
+      }
     };
     input.click();
   }, [editor, journeyLogId]);

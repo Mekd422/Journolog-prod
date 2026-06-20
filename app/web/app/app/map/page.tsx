@@ -7,6 +7,7 @@ import { pb } from "@/lib/pocketbase";
 import { useAuth } from "@/context/AuthContext";
 import type { Entry } from "@/types";
 import { Button } from "@/components/ui/Button";
+import type mapboxgl from "mapbox-gl";
 
 // Import Mapbox styles explicitly to prevent layout breaking
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -19,17 +20,15 @@ interface GeoEntry extends Entry {
 export default function MapPage() {
   const { user } = useAuth();
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<any>(null); // Kept as any to ease raw Mapbox manipulation
-  const markersRef = useRef<any[]>([]);
-  const popupRef = useRef<any>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const popupRef = useRef<mapboxgl.Popup | null>(null);
   const mapboxglRef = useRef<(typeof import("mapbox-gl"))['default'] | null>(null);
 
   const [entries, setEntries] = useState<GeoEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [mapError, setMapError] = useState("");
-
-  const tokenPresent = Boolean(process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -111,19 +110,23 @@ export default function MapPage() {
         )
       );
 
-      map.current = new mapboxgl.Map({
+      const mapInstance = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/outdoors-v12",
         bounds: bounds.toArray() as [[number, number], [number, number]],
         fitBoundsOptions: { padding: 50 },
       });
 
-      popupRef.current = new mapboxgl.Popup({
+      map.current = mapInstance;
+
+      const popupInstance = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false,
         anchor: "bottom",
         offset: [0, -35],
       });
+
+      popupRef.current = popupInstance;
 
       markersRef.current = entries.map((entry) => {
         const el = document.createElement("div");
@@ -141,7 +144,7 @@ export default function MapPage() {
 
         const marker = new mapboxgl.Marker(el)
           .setLngLat([entry.longitude, entry.latitude])
-          .addTo(map.current);
+          .addTo(mapInstance);
 
         el.addEventListener("click", () => {
           const html = `
@@ -163,10 +166,10 @@ export default function MapPage() {
             </div>
           `;
 
-          popupRef.current
+          popupInstance
             .setLngLat([entry.longitude, entry.latitude])
             .setHTML(html)
-            .addTo(map.current);
+            .addTo(mapInstance);
         });
 
         el.addEventListener("mouseenter", () => {
@@ -187,7 +190,9 @@ export default function MapPage() {
       };
     } catch (err) {
       console.error("Map initialization error:", err);
-      setMapError("Could not initialize the map. Please try again.");
+      Promise.resolve().then(() => {
+        setMapError("Could not initialize the map. Please try again.");
+      });
     }
   }, [entries]);
 

@@ -134,7 +134,7 @@ export default function TagsPage() {
       ) : Object.keys(tagsByType).length === 0 ? (
         <div className="rounded-[8px] bg-white p-10 text-center shadow-card">
           <p className="text-text-body">
-            You haven't created any tags yet.
+            You haven&apos;t created any tags yet.
           </p>
           <Link href="/app/logs" className="mt-4 inline-block">
             <Button variant="outline">View Journey Logs</Button>

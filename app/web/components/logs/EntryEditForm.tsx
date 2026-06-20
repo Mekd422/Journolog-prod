@@ -6,7 +6,7 @@ import { FormEvent, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { pb } from "@/lib/pocketbase";
 import { geocodePlace, type MapboxGeocodingResult } from "@/lib/mapbox";
-import type { Entry } from "@/types";
+import type { Entry, Tag } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { TipTapEditor } from "@/components/editor/TipTapEditor";
@@ -38,9 +38,9 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
   // Tags state
   const expandedTags = entry.expand?.tags;
   const initialTags = Array.isArray(expandedTags)
-    ? expandedTags.map((t: any) => t.name)
+    ? expandedTags.map((t: Tag) => t.name)
     : expandedTags && typeof expandedTags === "object"
-      ? [expandedTags.name].filter(Boolean)
+      ? [(expandedTags as Tag).name].filter(Boolean)
       : [];
   const [entryTags, setEntryTags] = useState<string[]>(initialTags);
   const [tagInput, setTagInput] = useState("");
@@ -61,12 +61,12 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
   const [isExcerptOpen, setIsExcerptOpen] = useState(true);
   const [isCoverOpen, setIsCoverOpen] = useState(true);
 
-  // Location suggestions state
+  // Location suggestions stateMT
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<MapboxGeocodingResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const searchTimeout = useRef<any>(null);
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
@@ -75,11 +75,11 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
       if (suggestions.length > 0) {
         setTimeout(() => setSuggestions([]), 0);
       }
+      Promise.resolve().then(() => setIsSearching(false));
       return;
     }
 
     let mounted = true;
-    setIsSearching(true);
     searchTimeout.current = setTimeout(async () => {
       const results = await geocodePlace(searchQuery);
       if (!mounted) return;
@@ -349,8 +349,12 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
                     type="text"
                     value={searchQuery}
                     onChange={(event) => {
-                      setSearchQuery(event.target.value);
+                      const val = event.target.value;
+                      setSearchQuery(val);
                       setShowSuggestions(true);
+                      if (val.trim()) {
+                        setIsSearching(true);
+                      }
                     }}
                     onFocus={() => setShowSuggestions(true)}
                     onKeyDown={(e) => {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { pb } from "@/lib/pocketbase";
 import { geocodePlace, type MapboxGeocodingResult } from "@/lib/mapbox";
@@ -57,7 +57,7 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
   const [suggestions, setSuggestions] = useState<MapboxGeocodingResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const searchTimeout = useRef<any>(null);
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
@@ -66,11 +66,11 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
       if (suggestions.length > 0) {
         setTimeout(() => setSuggestions([]), 0);
       }
+      Promise.resolve().then(() => setIsSearching(false));
       return;
     }
 
     let mounted = true;
-    setIsSearching(true);
     searchTimeout.current = setTimeout(async () => {
       const results = await geocodePlace(searchQuery);
       if (!mounted) return;
@@ -296,8 +296,12 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
                     type="text"
                     value={searchQuery}
                     onChange={(event) => {
-                      setSearchQuery(event.target.value);
+                      const val = event.target.value;
+                      setSearchQuery(val);
                       setShowSuggestions(true);
+                      if (val.trim()) {
+                        setIsSearching(true);
+                      }
                     }}
                     onFocus={() => setShowSuggestions(true)}
                     onKeyDown={(e) => {

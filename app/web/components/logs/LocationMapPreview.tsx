@@ -13,6 +13,7 @@ export function LocationMapPreview({ latitude, longitude }: LocationMapPreviewPr
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const initialCoords = useRef({ latitude, longitude });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -29,7 +30,7 @@ export function LocationMapPreview({ latitude, longitude }: LocationMapPreviewPr
     const map = new mapboxgl.Map({
       container: containerRef.current,
       style: "mapbox://styles/mapbox/streets-v12",
-      center: [longitude, latitude],
+      center: [initialCoords.current.longitude, initialCoords.current.latitude],
       zoom: 12,
       interactive: false, // Make it preview-only (non-interactive panning/zooming via mouse drag)
       attributionControl: false,
@@ -39,7 +40,7 @@ export function LocationMapPreview({ latitude, longitude }: LocationMapPreviewPr
 
     // Create marker
     const marker = new mapboxgl.Marker({ color: "#c06a42" })
-      .setLngLat([longitude, latitude])
+      .setLngLat([initialCoords.current.longitude, initialCoords.current.latitude])
       .addTo(map);
 
     markerRef.current = marker;
