@@ -33,7 +33,7 @@ function InteractiveHeroImage() {
 
   return (
     <div 
-      className="relative w-full h-[500px] lg:h-[600px] flex items-center justify-center perspective-1000"
+      className="relative w-full h-[320px] sm:h-[450px] lg:h-[600px] flex items-center justify-center perspective-1000"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       ref={cardRef}
@@ -95,14 +95,14 @@ export default function HomePage() {
             A quiet, linear space to preserve your adventures for yourself, and easily share them with the world.
           </p>
           <div className="mt-8">
-            <div className="flex items-center gap-4">
-              <Link href="/signup">
-                <button className="bg-[#BA4A29] text-white text-base font-medium px-8 py-3.5 rounded-md hover:bg-[#a33f21] transition shadow-md">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+              <Link href="/signup" className="w-full sm:w-auto">
+                <button className="w-full bg-[#BA4A29] text-white text-base font-medium px-8 py-3.5 rounded-md hover:bg-[#a33f21] transition shadow-md cursor-pointer">
                   Create a Free Journal
                 </button>
               </Link>
-              <Link href="/discover">
-                <button className="border border-gray-200 text-gray-800 text-base font-medium px-6 py-3 rounded-md hover:bg-gray-50 transition">
+              <Link href="/discover" className="w-full sm:w-auto">
+                <button className="w-full border border-gray-200 text-gray-850 text-base font-medium px-6 py-3.5 rounded-md hover:bg-gray-50 transition cursor-pointer">
                   Discover Public Logs
                 </button>
               </Link>

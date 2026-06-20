@@ -96,71 +96,120 @@ export default function EntriesPage() {
           </Link>
         </div>
       ) : (
-        <div className="rounded-[8px] bg-white shadow-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-black/10 bg-black/2">
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-text-primary">
-                    Title
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-text-primary">
-                    Journey Log
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-text-primary">
-                    Date
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-text-primary">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-text-primary">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {entries.map((entry) => (
-                  <tr
-                    key={entry.id}
-                    className="border-b border-black/5 transition hover:bg-black/2"
-                  >
-                    <td className="px-6 py-4 text-sm text-text-primary font-medium">
+        <div className="space-y-4">
+          {/* Mobile view: Stacked Cards */}
+          <div className="space-y-4 sm:hidden">
+            {entries.map((entry) => (
+              <div
+                key={entry.id}
+                className="rounded-[8px] bg-white p-5 shadow-card border border-black/5 flex flex-col gap-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-text-primary leading-snug">
                       {entry.title}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-text-body">
-                      {entry.expand?.journey_log?.title || "—"}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-text-body">
-                      {formatDate(entry.entry_date)}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span
-                        className={cn(
-                          "inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium",
-                          entry.status === "draft"
-                            ? "bg-black/5 text-text-body"
-                            : "bg-accent/10 text-accent"
-                        )}
-                      >
-                        {entry.status === "draft" ? "Draft" : "Published"}
+                    </h3>
+                    <p className="text-xs text-text-body mt-1 flex items-center gap-1">
+                      <span>📖</span>
+                      <span className="truncate max-w-[200px]">
+                        {entry.expand?.journey_log?.title || "Untitled Log"}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <Link href={`/app/entries/${entry.id}/edit`}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="gap-1.5"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                          Edit
-                        </Button>
-                      </Link>
-                    </td>
+                    </p>
+                  </div>
+                  <span
+                    className={cn(
+                      "inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                      entry.status === "draft"
+                        ? "bg-black/5 text-text-body"
+                        : "bg-accent/10 text-accent"
+                    )}
+                  >
+                    {entry.status === "draft" ? "Draft" : "Published"}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between border-t border-black/5 pt-3 mt-1">
+                  <span className="text-xs text-text-body/80">
+                    {formatDate(entry.entry_date)}
+                  </span>
+                  <Link href={`/app/entries/${entry.id}/edit`}>
+                    <Button variant="ghost" size="sm" className="gap-1.5 py-1">
+                      <Edit2 className="h-3.5 w-3.5" />
+                      Edit
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop/Tablet view: Tabular Table */}
+          <div className="hidden sm:block rounded-[8px] bg-white shadow-card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-black/10 bg-black/2">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-text-primary">
+                      Title
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-text-primary">
+                      Journey Log
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-text-primary">
+                      Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-text-primary">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-right text-sm font-semibold text-text-primary">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {entries.map((entry) => (
+                    <tr
+                      key={entry.id}
+                      className="border-b border-black/5 transition hover:bg-black/2"
+                    >
+                      <td className="px-6 py-4 text-sm text-text-primary font-medium">
+                        {entry.title}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-text-body">
+                        {entry.expand?.journey_log?.title || "—"}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-text-body">
+                        {formatDate(entry.entry_date)}
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <span
+                          className={cn(
+                            "inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium",
+                            entry.status === "draft"
+                              ? "bg-black/5 text-text-body"
+                              : "bg-accent/10 text-accent"
+                          )}
+                        >
+                          {entry.status === "draft" ? "Draft" : "Published"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <Link href={`/app/entries/${entry.id}/edit`}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="gap-1.5"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                            Edit
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

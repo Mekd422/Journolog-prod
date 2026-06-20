@@ -21,15 +21,15 @@ export function JourneyLogCard({ log }: JourneyLogCardProps) {
   const locationText = [log.country, log.region].filter(Boolean).join(", ");
 
   return (
-    <article className="flex items-stretch gap-5 rounded-[8px] bg-white p-5 shadow-card">
-      <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-[8px] bg-primary/10">
+    <article className="flex flex-col sm:flex-row items-stretch gap-5 rounded-[8px] bg-white p-5 shadow-card">
+      <div className="relative h-48 w-full sm:h-28 sm:w-40 shrink-0 overflow-hidden rounded-[8px] bg-primary/10">
         {coverUrl ? (
           <Image
             src={coverUrl}
             alt={log.title}
             fill
             className="object-cover"
-            sizes="160px"
+            sizes="(max-width: 640px) 100vw, 160px"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-primary/40">
@@ -38,7 +38,7 @@ export function JourneyLogCard({ log }: JourneyLogCardProps) {
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col justify-between">
+      <div className="flex min-w-0 flex-1 flex-col justify-between w-full">
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <h2 className="font-serif text-xl text-text-primary">{log.title}</h2>
@@ -61,10 +61,10 @@ export function JourneyLogCard({ log }: JourneyLogCardProps) {
         </p>
       </div>
 
-      <div className="flex shrink-0 flex-col items-end justify-between">
-        <div className="flex items-center gap-2">
-          <Link href={`/app/logs/${log.id}`}>
-            <Button variant="outline" size="sm">
+      <div className="flex w-full sm:w-auto items-center justify-between sm:flex-col sm:items-end sm:justify-between border-t border-black/5 sm:border-t-0 pt-3 sm:pt-0 mt-3 sm:mt-0">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+          <Link href={`/app/logs/${log.id}`} className="w-full sm:w-auto">
+            <Button variant="outline" size="sm" className="w-full sm:w-auto">
               Continue Writing
             </Button>
           </Link>
@@ -191,14 +191,14 @@ export function NewJourneyLogCard({ variant = "list" }: { variant?: "list" | "gr
   return (
     <Link
       href="/app/logs/new"
-      className="flex items-center gap-5 rounded-[8px] border border-dashed border-black/10 bg-white/60 p-5 shadow-card transition hover:border-accent/40 hover:bg-white"
+      className="flex flex-col sm:flex-row items-center sm:items-start gap-5 rounded-[8px] border border-dashed border-black/10 bg-white/60 p-5 shadow-card transition hover:border-accent/40 hover:bg-white"
     >
-      <div className="flex h-28 w-40 shrink-0 items-center justify-center rounded-[8px] bg-accent/10">
+      <div className="flex h-28 w-full sm:w-40 shrink-0 items-center justify-center rounded-[8px] bg-accent/10">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white">
           <Plus className="h-6 w-6" />
         </div>
       </div>
-      <div>
+      <div className="text-center sm:text-left">
         <h2 className="font-serif text-xl text-text-primary">
           Start a New Journey Log
         </h2>

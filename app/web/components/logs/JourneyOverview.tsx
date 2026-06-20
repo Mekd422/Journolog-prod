@@ -36,11 +36,11 @@ export function JourneyOverview({ log, entries }: JourneyOverviewProps) {
           </div>
         ) : null}
 
-        <div className="p-8">
+        <div className="p-5 sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-3">
-                <h1 className="font-serif text-3xl text-text-primary">
+                <h1 className="font-serif text-2xl sm:text-3xl text-text-primary">
                   {log.title}
                 </h1>
                 <StatusBadge status={log.status} />
@@ -94,26 +94,36 @@ export function JourneyOverview({ log, entries }: JourneyOverviewProps) {
             {entries.map((entry) => (
               <article
                 key={entry.id}
-                className="rounded-[8px] bg-white p-6 shadow-card"
+                className="rounded-[8px] bg-white p-5 sm:p-6 shadow-card hover:border-accent/20 border border-transparent transition-all"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm text-accent">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm text-accent">
                       {formatTimelineDate(entry.entry_date)}
                     </p>
-                    <h3 className="mt-1 font-serif text-xl text-text-primary">
-                      {entry.title}
-                    </h3>
+                    <Link href={`/app/entries/${entry.id}/edit`}>
+                      <h3 className="mt-1 font-serif text-lg sm:text-xl text-text-primary hover:text-accent transition-colors cursor-pointer">
+                        {entry.title}
+                      </h3>
+                    </Link>
                     {entry.location_name ? (
-                      <p className="mt-2 flex items-center gap-1.5 text-sm text-text-body">
-                        <MapPin className="h-4 w-4" />
+                      <p className="mt-2 flex items-center gap-1.5 text-xs sm:text-sm text-text-body">
+                        <MapPin className="h-3.5 w-3.5" />
                         {entry.location_name}
                       </p>
                     ) : null}
                   </div>
-                  <span className="rounded-full bg-black/5 px-2.5 py-0.5 text-xs capitalize text-text-body">
-                    {entry.status}
-                  </span>
+                  
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <span className="rounded-full bg-black/5 px-2.5 py-0.5 text-xs capitalize text-text-body">
+                      {entry.status}
+                    </span>
+                    <Link href={`/app/entries/${entry.id}/edit`}>
+                      <Button variant="ghost" size="sm" className="h-8 py-1 px-2.5">
+                        Edit
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </article>
             ))}

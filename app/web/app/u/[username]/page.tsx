@@ -80,8 +80,9 @@ export default async function PublicProfilePage({
               <div className="relative h-24 w-24 overflow-hidden rounded-full shadow-lg">
                 <Image
                   src={avatarUrl}
-                  alt={user.name}
+                  alt={user.name || "User Avatar"}
                   fill
+                  sizes="96px"
                   className="object-cover"
                 />
               </div>
@@ -138,6 +139,7 @@ export default async function PublicProfilePage({
                           src={coverUrl}
                           alt={log.title}
                           fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 350px"
                           className="object-cover transition group-hover:scale-105"
                         />
                       </div>

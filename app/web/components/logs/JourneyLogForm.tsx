@@ -147,6 +147,7 @@ export function JourneyLogForm() {
               src={URL.createObjectURL(cover)}
               alt="Cover preview"
               fill
+              sizes="(max-width: 768px) 100vw, 672px"
               className="object-cover"
             />
           </div>

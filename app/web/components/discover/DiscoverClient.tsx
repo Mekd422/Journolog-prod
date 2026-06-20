@@ -74,6 +74,7 @@ export function DiscoverClient() {
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [mapBounds, setMapBounds] = useState<{ west: number; east: number; south: number; north: number } | null>(null);
   const [activeTab, setActiveTab] = useState<"recent" | "popular" | "featured">("recent");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -303,9 +304,22 @@ export function DiscoverClient() {
 
       {/* Main Discover Hero section */}
       <section className="bg-linear-to-b from-primary/5 px-6 py-10 border-b border-black/5">
-        <div className="mx-auto max-w-6xl">
-          <h1 className="font-serif text-4xl text-text-primary">Discover Journeys</h1>
-          <p className="mt-2 text-lg text-text-body">Real stories from real places.</p>
+        <div className="mx-auto max-w-6xl flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <h1 className="font-serif text-4xl text-text-primary">Discover Journeys</h1>
+            <p className="mt-2 text-lg text-text-body">Real stories from real places.</p>
+          </div>
+          {/* Search bar inside hero section */}
+          <div className="w-full md:max-w-md relative flex-shrink-0">
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="Search by location, country, or region..."
+              className="w-full rounded-[6px] border border-gray-200 bg-white py-2.5 pl-4 pr-10 text-sm shadow-xs focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+            />
+            <Search className="absolute right-3 top-3.5 h-4 w-4 text-gray-400" />
+          </div>
         </div>
       </section>
 
@@ -315,41 +329,119 @@ export function DiscoverClient() {
           {/* Main Feed Content */}
           <div className="space-y-8">
             {/* Tabs & Sort Controls */}
-            <div className="flex border-b border-gray-200">
+            <div className="flex flex-wrap items-center justify-between border-b border-gray-200 gap-4">
+              <div className="flex">
+                <button
+                  onClick={() => {
+                    setActiveTab("recent");
+                    // Clear staff pick filters if clicking recent
+                  }}
+                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                    activeTab === "recent"
+                      ? "border-accent text-accent"
+                      : "border-transparent text-text-body hover:text-text-primary"
+                  }`}
+                >
+                  Recent
+                </button>
+                <button
+                  onClick={() => setActiveTab("popular")}
+                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                    activeTab === "popular"
+                      ? "border-accent text-accent"
+                      : "border-transparent text-text-body hover:text-text-primary"
+                  }`}
+                >
+                  Popular This Week
+                </button>
+                <button
+                  onClick={() => setActiveTab("featured")}
+                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                    activeTab === "featured"
+                      ? "border-accent text-accent"
+                      : "border-transparent text-text-body hover:text-text-primary"
+                  }`}
+                >
+                  Staff Picks
+                </button>
+              </div>
+
+              {/* Mobile Filter Toggle */}
               <button
-                onClick={() => {
-                  setActiveTab("recent");
-                  // Clear staff pick filters if clicking recent
-                }}
-                className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
-                  activeTab === "recent"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-text-body hover:text-text-primary"
-                }`}
+                type="button"
+                onClick={() => setShowMobileFilters(!showMobileFilters)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-black/10 text-xs font-semibold text-text-body bg-white hover:bg-black/2 md:hidden cursor-pointer"
               >
-                Recent
-              </button>
-              <button
-                onClick={() => setActiveTab("popular")}
-                className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
-                  activeTab === "popular"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-text-body hover:text-text-primary"
-                }`}
-              >
-                Popular This Week
-              </button>
-              <button
-                onClick={() => setActiveTab("featured")}
-                className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
-                  activeTab === "featured"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-text-body hover:text-text-primary"
-                }`}
-              >
-                Staff Picks
+                <span>{showMobileFilters ? "Hide Filters ✕" : "Filters 🔍"}</span>
               </button>
             </div>
+
+            {/* Mobile collapsible filters container */}
+            {showMobileFilters && (
+              <div className="bg-white p-5 border border-black/5 rounded-[8px] space-y-6 md:hidden shadow-sm">
+                {/* POPULAR REGIONS */}
+                <div className="space-y-3">
+                  <h3 className="font-serif text-base font-bold text-text-primary">Popular Regions</h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    {POPULAR_REGIONS.map((region) => {
+                      const isActive = selectedRegion === region;
+                      return (
+                        <button
+                          key={region}
+                          onClick={() => {
+                            setSelectedRegion(isActive ? null : region);
+                            setShowMobileFilters(false);
+                          }}
+                          className={`px-2 py-1.5 text-xs font-medium rounded-md border text-center transition-all cursor-pointer ${
+                            isActive
+                              ? "bg-accent border-accent text-white shadow-sm"
+                              : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
+                          }`}
+                        >
+                          {region}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* EXPLORE THE MAP */}
+                <div className="space-y-3">
+                  <h3 className="font-serif text-base font-bold text-text-primary">Explore the Map</h3>
+                  <DiscoverMap
+                    entries={filteredMapEntries}
+                    onBoundsChange={setMapBounds}
+                    selectedRegion={selectedRegion || ""}
+                  />
+                </div>
+
+                {/* TRENDING TAGS */}
+                <div className="space-y-3">
+                  <h3 className="font-serif text-base font-bold text-text-primary">Trending Tags</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {trendingTags.map((tag) => {
+                      const isActive = selectedTag === tag;
+                      return (
+                        <button
+                          key={tag}
+                          onClick={() => {
+                            setSelectedTag(isActive ? null : tag);
+                            setShowMobileFilters(false);
+                          }}
+                          className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all cursor-pointer ${
+                            isActive
+                              ? "bg-accent border-accent text-white"
+                              : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
+                          }`}
+                        >
+                          #{tag}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Loading state */}
             {isLoading ? (
@@ -471,6 +563,7 @@ export function DiscoverClient() {
                                       src={avatarUrl}
                                       alt={user?.name || "Author"}
                                       fill
+                                      sizes="24px"
                                       className="object-cover"
                                     />
                                   ) : (
@@ -525,25 +618,7 @@ export function DiscoverClient() {
           </div>
 
           {/* Right Sidebar Filters */}
-          <aside className="space-y-6">
-            {/* FIND A PLACE */}
-            <div className="rounded-[8px] bg-white p-5 border border-black/5 shadow-card space-y-3">
-              <h2 className="font-serif text-lg font-bold text-text-primary">Find a Place</h2>
-              <p className="text-xs text-text-body leading-relaxed">
-                Search by location, country, or region.
-              </p>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  placeholder="e.g. Iceland, Patagonia, Morocco..."
-                  className="w-full rounded-[6px] border border-gray-200 py-2 pl-3 pr-10 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-                />
-                <Search className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
-              </div>
-            </div>
-
+          <aside className="hidden lg:block space-y-6">
             {/* POPULAR REGIONS */}
             <div className="rounded-[8px] bg-white p-5 border border-black/5 shadow-card space-y-4">
               <h2 className="font-serif text-lg font-bold text-text-primary">Popular Regions</h2>

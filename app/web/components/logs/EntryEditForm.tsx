@@ -575,6 +575,7 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
                     src={coverUrl}
                     alt="Cover preview"
                     fill
+                    sizes="(max-width: 1024px) 100vw, 320px"
                     className="object-cover"
                   />
                 </div>
