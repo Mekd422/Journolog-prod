@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/Button";
 
 const navItems = [
   { href: "/app/logs", label: "Journey Logs", icon: BookOpen },
+  { href: "/discover", label: "Discover", icon: Compass },
   { href: "/app/entries", label: "Entries", icon: BookOpen },
   { href: "/app/media", label: "Media", icon: ImageIcon },
   { href: "/app/map", label: "Map", icon: Map },
@@ -53,9 +54,9 @@ export function AppSidebar({ isOpen = false, onClose }: AppSidebarProps) {
       >
         <div className="flex items-center justify-between border-b border-white/10 px-6 py-6">
           <Link
-            href="/app/logs"
+            href="/"
             onClick={onClose}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:opacity-90"
           >
             <Compass className="h-5 w-5 text-accent" strokeWidth={1.5} />
             <span className="font-serif text-lg tracking-wide">journolog</span>

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { Compass, Mail, ArrowRight, Check, Camera, Share2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 
 function InteractiveHeroImage() {
@@ -64,8 +65,17 @@ function InteractiveHeroImage() {
 }
 
 export default function HomePage() {
+  const { isAuthenticated } = useAuth();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const showDashboardLink = isMounted && isAuthenticated;
+
   return (
-    <main className="min-h-screen bg-[#FAF8F5] text-[#2A2A2A] font-sans antialiased">
+    <main className="min-h-screen bg-[#FAF8F5] text-[#2A2A2A] font-sans antialiased overflow-x-hidden">
       
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 border-b border-gray-100">
         <div className="flex items-center gap-2">
@@ -78,11 +88,19 @@ export default function HomePage() {
           <Link href="#explore" className="hover:text-gray-900">Explore</Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Link href="/signup">
-            <button className="bg-[#BA4A29] text-white text-sm font-medium px-5 py-2.5 rounded-md hover:bg-[#a33f21] transition">
-              Start Your Log
-            </button>
-          </Link>
+          {showDashboardLink ? (
+            <Link href="/app/logs">
+              <button className="bg-[#BA4A29] text-white text-sm font-medium px-5 py-2.5 rounded-md hover:bg-[#a33f21] transition cursor-pointer">
+                Go to Dashboard
+              </button>
+            </Link>
+          ) : (
+            <Link href="/signup">
+              <button className="bg-[#BA4A29] text-white text-sm font-medium px-5 py-2.5 rounded-md hover:bg-[#a33f21] transition cursor-pointer">
+                Start Your Log
+              </button>
+            </Link>
+          )}
         </div>
       </header>
 
@@ -96,11 +114,19 @@ export default function HomePage() {
           </p>
           <div className="mt-8">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <Link href="/signup" className="w-full sm:w-auto">
-                <button className="w-full bg-[#BA4A29] text-white text-base font-medium px-8 py-3.5 rounded-md hover:bg-[#a33f21] transition shadow-md cursor-pointer">
-                  Create a Free Journal
-                </button>
-              </Link>
+              {showDashboardLink ? (
+                <Link href="/app/logs" className="w-full sm:w-auto">
+                  <button className="w-full bg-[#BA4A29] text-white text-base font-medium px-8 py-3.5 rounded-md hover:bg-[#a33f21] transition shadow-md cursor-pointer">
+                    Go to Dashboard
+                  </button>
+                </Link>
+              ) : (
+                <Link href="/signup" className="w-full sm:w-auto">
+                  <button className="w-full bg-[#BA4A29] text-white text-base font-medium px-8 py-3.5 rounded-md hover:bg-[#a33f21] transition shadow-md cursor-pointer">
+                    Create a Free Journal
+                  </button>
+                </Link>
+              )}
               <Link href="/discover" className="w-full sm:w-auto">
                 <button className="w-full border border-gray-200 text-gray-850 text-base font-medium px-6 py-3.5 rounded-md hover:bg-gray-50 transition cursor-pointer">
                   Discover Public Logs
@@ -142,14 +168,14 @@ export default function HomePage() {
               Send photos, videos, and notes directly to your unique email address and we&apos;ll add them to your log dynamically.
             </p>
           </div>
-          <div className="flex items-center justify-center gap-4 bg-[#FAF8F5] rounded-xl p-6 border border-gray-200/60">
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-4 w-44 text-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 bg-[#FAF8F5] rounded-xl p-4 sm:p-6 border border-gray-200/60">
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-4 w-full sm:w-44 text-center">
               <Mail className="mx-auto text-[#BA4A29] mb-2" size={20} />
               <p className="text-[11px] text-gray-500 font-medium">To: logs@journolog.com</p>
               <div className="h-2 w-16 bg-gray-200 mx-auto mt-2 rounded" />
             </div>
-            <ArrowRight className="text-gray-300" size={18} />
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-3 w-44 text-xs">
+            <ArrowRight className="text-gray-300 rotate-90 sm:rotate-0 flex-shrink-0" size={18} />
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-3 w-full sm:w-44 text-xs">
               <span className="text-[10px] bg-green-50 text-green-700 px-1.5 py-0.5 rounded">Processed</span>
               <p className="mt-1 font-serif font-semibold text-gray-800">Sunset in Chiang Mai</p>
             </div>
@@ -167,17 +193,17 @@ export default function HomePage() {
           <div className="grid md:grid-cols-[250px_1fr] gap-8">
             <div className="space-y-12 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-gray-200 pl-8">
               <div className="relative">
-                <div className="absolute -left-[29px] top-1 h-3 w-3 rounded-full bg-[#BA4A29] ring-4 ring-white" />
+                <div className="absolute left-1.5 top-1 h-3 w-3 rounded-full bg-[#BA4A29] ring-4 ring-white" />
                 <p className="text-xs font-semibold text-[#BA4A29]">May 10</p>
                 <p className="font-serif font-medium text-gray-900 text-sm">Bangkok, Thailand</p>
               </div>
               <div className="relative">
-                <div className="absolute -left-[29px] top-1 h-3 w-3 rounded-full bg-gray-300 ring-4 ring-white" />
+                <div className="absolute left-1.5 top-1 h-3 w-3 rounded-full bg-gray-300 ring-4 ring-white" />
                 <p className="text-xs font-semibold text-gray-400">May 12</p>
                 <p className="font-serif font-medium text-gray-700 text-sm">Chiang Mai, Thailand</p>
               </div>
               <div className="relative">
-                <div className="absolute -left-[29px] top-1 h-3 w-3 rounded-full bg-gray-300 ring-4 ring-white" />
+                <div className="absolute left-1.5 top-1 h-3 w-3 rounded-full bg-gray-300 ring-4 ring-white" />
                 <p className="text-xs font-semibold text-gray-400">May 16</p>
                 <p className="font-serif font-medium text-gray-700 text-sm">Kyoto, Japan</p>
               </div>

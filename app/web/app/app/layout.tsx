@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Menu } from "lucide-react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppSidebar } from "@/components/layout/AppSidebar";
@@ -21,7 +22,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             >
               <Menu className="h-6 w-6" />
             </button>
-            <span className="font-serif text-lg tracking-wide">journolog</span>
+            <Link href="/" className="font-serif text-lg tracking-wide hover:opacity-90">
+              journolog
+            </Link>
           </div>
         </header>
 
