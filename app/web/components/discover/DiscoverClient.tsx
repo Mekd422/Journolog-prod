@@ -189,25 +189,7 @@ export function DiscoverClient() {
       if (mappedContinent !== selectedRegion) return false;
     }
 
-    // 4. Map Bounds filter (journey must have an entry in current map bounds)
-    if (mapBounds) {
-      const journeyEntries = entries.filter(
-        (e) => e.journey_log === journey.id && e.latitude != null && e.longitude != null
-      );
-      // If no entries are geotagged, or none are in bounds, filter out
-      if (journeyEntries.length > 0) {
-        const hasEntryInBounds = journeyEntries.some(
-          (e) =>
-            e.longitude! >= mapBounds.west &&
-            e.longitude! <= mapBounds.east &&
-            e.latitude! >= mapBounds.south &&
-            e.latitude! <= mapBounds.north
-        );
-        if (!hasEntryInBounds) return false;
-      } else {
-        return false;
-      }
-    }
+
 
     return true;
   });
@@ -283,7 +265,7 @@ export function DiscoverClient() {
   });
 
   // Expose active filters list for display
-  const hasActiveFilters = Boolean(searchText || selectedTag || selectedRegion || mapBounds);
+  const hasActiveFilters = Boolean(searchText || selectedTag || selectedRegion);
 
   return (
     <main className="min-h-screen bg-background">
@@ -336,31 +318,28 @@ export function DiscoverClient() {
                     setActiveTab("recent");
                     // Clear staff pick filters if clicking recent
                   }}
-                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
-                    activeTab === "recent"
+                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "recent"
                       ? "border-accent text-accent"
                       : "border-transparent text-text-body hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Recent
                 </button>
                 <button
                   onClick={() => setActiveTab("popular")}
-                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
-                    activeTab === "popular"
+                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "popular"
                       ? "border-accent text-accent"
                       : "border-transparent text-text-body hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Popular This Week
                 </button>
                 <button
                   onClick={() => setActiveTab("featured")}
-                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
-                    activeTab === "featured"
+                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "featured"
                       ? "border-accent text-accent"
                       : "border-transparent text-text-body hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Staff Picks
                 </button>
@@ -392,11 +371,10 @@ export function DiscoverClient() {
                             setSelectedRegion(isActive ? null : region);
                             setShowMobileFilters(false);
                           }}
-                          className={`px-2 py-1.5 text-xs font-medium rounded-md border text-center transition-all cursor-pointer ${
-                            isActive
+                          className={`px-2 py-1.5 text-xs font-medium rounded-md border text-center transition-all cursor-pointer ${isActive
                               ? "bg-accent border-accent text-white shadow-sm"
                               : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           {region}
                         </button>
@@ -428,11 +406,10 @@ export function DiscoverClient() {
                             setSelectedTag(isActive ? null : tag);
                             setShowMobileFilters(false);
                           }}
-                          className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all cursor-pointer ${
-                            isActive
+                          className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all cursor-pointer ${isActive
                               ? "bg-accent border-accent text-white"
                               : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           #{tag}
                         </button>
@@ -485,14 +462,7 @@ export function DiscoverClient() {
                         </button>
                       </span>
                     )}
-                    {mapBounds && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
-                        Map viewport
-                        <button onClick={() => setMapBounds(null)}>
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    )}
+
                     <button
                       onClick={clearAllFilters}
                       className="text-xs text-text-body/80 hover:text-accent font-semibold underline cursor-pointer ml-auto"
@@ -524,11 +494,11 @@ export function DiscoverClient() {
                       const coverUrl = journey.cover_image
                         ? pb.files.getURL(journey, journey.cover_image)
                         : (journeyEntries.find((e) => e.cover_image)?.cover_image
-                            ? pb.files.getURL(
-                                journeyEntries.find((e) => e.cover_image)!,
-                                journeyEntries.find((e) => e.cover_image)!.cover_image!
-                              )
-                            : null);
+                          ? pb.files.getURL(
+                            journeyEntries.find((e) => e.cover_image)!,
+                            journeyEntries.find((e) => e.cover_image)!.cover_image!
+                          )
+                          : null);
 
                       const user = journey.expand?.user;
                       const avatarUrl = user?.avatar ? pb.files.getURL(user, user.avatar) : null;
@@ -629,11 +599,10 @@ export function DiscoverClient() {
                     <button
                       key={region}
                       onClick={() => setSelectedRegion(isActive ? null : region)}
-                      className={`px-3 py-2 text-xs font-medium rounded-md border text-center transition-all cursor-pointer ${
-                        isActive
+                      className={`px-3 py-2 text-xs font-medium rounded-md border text-center transition-all cursor-pointer ${isActive
                           ? "bg-accent border-accent text-white shadow-sm"
                           : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
-                      }`}
+                        }`}
                     >
                       {region}
                     </button>
@@ -667,11 +636,10 @@ export function DiscoverClient() {
                     <button
                       key={tag}
                       onClick={() => setSelectedTag(isActive ? null : tag)}
-                      className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all cursor-pointer ${
-                        isActive
+                      className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all cursor-pointer ${isActive
                           ? "bg-accent border-accent text-white"
                           : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
-                      }`}
+                        }`}
                     >
                       #{tag}
                     </button>

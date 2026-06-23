@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ExternalLink, MapPin, Plus } from "lucide-react";
+import { ExternalLink, MapPin, Plus, Settings } from "lucide-react";
 import { formatDateRange, formatTimelineDate } from "@/lib/dates";
 import { getFileUrl } from "@/lib/files";
 import type { Entry, JourneyLog } from "@/types";
@@ -66,6 +66,12 @@ export function JourneyOverview({ log, entries }: JourneyOverviewProps) {
                   </Button>
                 </a>
               ) : null}
+              <Link href={`/app/logs/${log.id}/edit`}>
+                <Button variant="outline" size="sm">
+                  <Settings className="h-4 w-4" />
+                  Edit Journey
+                </Button>
+              </Link>
               <Link href={`/app/logs/${log.id}/entries/new`}>
                 <Button size="sm">
                   <Plus className="h-4 w-4" />
