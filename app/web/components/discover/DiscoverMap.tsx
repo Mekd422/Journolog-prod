@@ -24,7 +24,6 @@ const REGION_COORDINATES: Record<string, { center: [number, number]; zoom: numbe
 export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: DiscoverMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Initialize Map
   useEffect(() => {
@@ -301,18 +300,9 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
     }
   }, [selectedRegion]);
 
-  function handleFullscreen() {
-    setIsFullscreen(!isFullscreen);
-    setTimeout(() => {
-      mapRef.current?.resize();
-    }, 100);
-  }
-
   return (
     <div
-      className={`relative w-full overflow-hidden shadow-card rounded-[8px] bg-white border border-black/5 ${
-        isFullscreen ? "fixed inset-0 z-50 h-screen w-screen" : "h-72"
-      }`}
+      className="relative w-full overflow-hidden shadow-card rounded-[8px] bg-white border border-black/5 h-72"
     >
       <div ref={containerRef} className="w-full h-full" />
 
@@ -331,13 +321,6 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
           -
         </button>
       </div>
-
-      <button
-        onClick={handleFullscreen}
-        className="absolute bottom-4 right-4 z-10 px-3 py-1.5 rounded-md bg-white border border-gray-200 shadow-md text-xs font-semibold text-text-primary hover:bg-gray-50 flex items-center gap-1 cursor-pointer"
-      >
-        {isFullscreen ? "Exit Fullscreen" : "View Map Fullscreen ⤢"}
-      </button>
     </div>
   );
 }
