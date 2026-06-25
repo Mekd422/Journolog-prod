@@ -136,11 +136,16 @@ export function DiscoverClient() {
     // 1. Find a Place search input (city, country, region, title, excerpt, entry locations)
     if (searchText.trim()) {
       const q = searchText.toLowerCase().trim();
+      const journeyContinent = getContinentForCountryAndRegion(
+        journey.country || "",
+        journey.region || ""
+      );
       const matchesJourney =
         journey.title.toLowerCase().includes(q) ||
         (journey.description && journey.description.toLowerCase().includes(q)) ||
         (journey.country && journey.country.toLowerCase().includes(q)) ||
-        (journey.region && journey.region.toLowerCase().includes(q));
+        (journey.region && journey.region.toLowerCase().includes(q)) ||
+        (journeyContinent && journeyContinent.toLowerCase() === q);
 
       const journeyEntries = entries.filter((e) => e.journey_log === journey.id);
       const matchesEntries = journeyEntries.some(
@@ -202,6 +207,10 @@ export function DiscoverClient() {
     // Search text
     if (searchText.trim()) {
       const q = searchText.toLowerCase().trim();
+      const journeyContinent = getContinentForCountryAndRegion(
+        journey.country || "",
+        journey.region || ""
+      );
       const matchesEntry =
         entry.title.toLowerCase().includes(q) ||
         (entry.location_name && entry.location_name.toLowerCase().includes(q));
@@ -209,7 +218,8 @@ export function DiscoverClient() {
         journey.title.toLowerCase().includes(q) ||
         (journey.description && journey.description.toLowerCase().includes(q)) ||
         (journey.country && journey.country.toLowerCase().includes(q)) ||
-        (journey.region && journey.region.toLowerCase().includes(q));
+        (journey.region && journey.region.toLowerCase().includes(q)) ||
+        (journeyContinent && journeyContinent.toLowerCase() === q);
 
       if (!matchesEntry && !matchesJourney) return false;
     }
@@ -269,108 +279,360 @@ export function DiscoverClient() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b border-black/5 bg-primary px-6 py-4 text-white sticky top-0 z-40">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
+      <header className="border-b border-black/5 bg-primary px-4 py-3 text-white sticky top-0 z-40">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Compass className="h-5 w-5 text-accent" strokeWidth={1.5} />
             <span className="font-serif text-lg">journolog</span>
           </Link>
-          <Link
-            href="/signup"
-            className="rounded-[4px] bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
-          >
-            Start Your Log
-          </Link>
+          <nav className="hidden md:flex items-center gap-8 text-sm">
+            <Link href="/discover" className="text-white hover:text-accent transition-colors">Discover</Link>
+            <Link href="/discover?tab=popular" className="text-white hover:text-accent transition-colors">Popular</Link>
+            <Link href="/discover?tab=regions" className="text-white hover:text-accent transition-colors">Regions</Link>
+            <Link href="#" className="text-white hover:text-accent transition-colors">About</Link>
+          </nav>
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block relative w-56">
+              <input
+                type="text"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="Search journologs..."
+                className="w-full rounded-[4px] border border-white/20 bg-white/10 py-1.5 pl-3 pr-8 text-sm text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/40 focus:outline-none"
+              />
+              <Search className="absolute right-2.5 top-2 h-4 w-4 text-white/50" />
+            </div>
+            <Link
+              href="/login"
+              className="text-sm font-medium text-white hover:text-accent transition-colors"
+            >
+              Log In
+            </Link>
+            <Link
+              href="/signup"
+              className="rounded-[4px] bg-accent px-4 py-1.5 text-sm font-medium text-white hover:bg-accent/90 transition-colors"
+            >
+              Start Your Log
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* Main Discover Hero section */}
-      <section className="bg-linear-to-b from-primary/5 px-6 py-10 border-b border-black/5">
-        <div className="mx-auto max-w-6xl flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h1 className="font-serif text-4xl text-text-primary">Discover Journeys</h1>
-            <p className="mt-2 text-lg text-text-body">Real stories from real places.</p>
-          </div>
-          {/* Search bar inside hero section */}
-          <div className="w-full md:max-w-md relative flex-shrink-0">
-            <input
-              type="text"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              placeholder="Search by location, country, or region..."
-              className="w-full rounded-[6px] border border-gray-200 bg-white py-2.5 pl-4 pr-10 text-sm shadow-xs focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-            />
-            <Search className="absolute right-3 top-3.5 h-4 w-4 text-gray-400" />
-          </div>
-        </div>
-      </section>
+      {/* Hero and Layout Combined */}
+      <section className="bg-gradient-to-b from-primary/5 px-2 py-10">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-6 lg:grid-cols-[1fr_380px] items-start">
+            <div className="space-y-6">
+              <div>
+                <h1 className="font-serif text-4xl text-text-primary">Discover Journeys</h1>
+                <p className="mt-2 text-base text-text-body">Real stories from real places.</p>
+              </div>
 
-      {/* Layout Content Grid */}
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-          {/* Main Feed Content */}
-          <div className="space-y-8">
-            {/* Tabs & Sort Controls */}
-            <div className="flex flex-wrap items-center justify-between border-b border-gray-200 gap-4">
-              <div className="flex">
+              {/* Tabs & Sort Controls */}
+              <div className="flex flex-wrap items-center justify-between border-b border-gray-200 gap-4 pb-4">
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => {
+                      setActiveTab("recent");
+                      // Clear staff pick filters if clicking recent
+                    }}
+                    className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "recent"
+                        ? "border-accent text-accent"
+                        : "border-transparent text-text-body hover:text-text-primary"
+                      }`}
+                  >
+                    Recent
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("popular")}
+                    className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "popular"
+                        ? "border-accent text-accent"
+                        : "border-transparent text-text-body hover:text-text-primary"
+                      }`}
+                  >
+                    Popular This Week
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("featured")}
+                    className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "featured"
+                        ? "border-accent text-accent"
+                        : "border-transparent text-text-body hover:text-text-primary"
+                      }`}
+                  >
+                    Staff Picks
+                  </button>
+                </div>
+
+                {/* Mobile Filter Toggle */}
                 <button
-                  onClick={() => {
-                    setActiveTab("recent");
-                    // Clear staff pick filters if clicking recent
-                  }}
-                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "recent"
-                      ? "border-accent text-accent"
-                      : "border-transparent text-text-body hover:text-text-primary"
-                    }`}
+                  type="button"
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-black/10 text-xs font-semibold text-text-body bg-white hover:bg-black/2 md:hidden cursor-pointer"
                 >
-                  Recent
-                </button>
-                <button
-                  onClick={() => setActiveTab("popular")}
-                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "popular"
-                      ? "border-accent text-accent"
-                      : "border-transparent text-text-body hover:text-text-primary"
-                    }`}
-                >
-                  Popular This Week
-                </button>
-                <button
-                  onClick={() => setActiveTab("featured")}
-                  className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === "featured"
-                      ? "border-accent text-accent"
-                      : "border-transparent text-text-body hover:text-text-primary"
-                    }`}
-                >
-                  Staff Picks
+                  <span>{showMobileFilters ? "Hide Filters ✕" : "Filters 🔍"}</span>
                 </button>
               </div>
 
-              {/* Mobile Filter Toggle */}
-              <button
-                type="button"
-                onClick={() => setShowMobileFilters(!showMobileFilters)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-black/10 text-xs font-semibold text-text-body bg-white hover:bg-black/2 md:hidden cursor-pointer"
-              >
-                <span>{showMobileFilters ? "Hide Filters ✕" : "Filters 🔍"}</span>
-              </button>
+              {/* Mobile collapsible filters container */}
+              {showMobileFilters && (
+                <div className="bg-white p-5 border border-black/5 rounded-[8px] space-y-6 md:hidden shadow-sm">
+                  {/* POPULAR REGIONS */}
+                  <div className="space-y-3">
+                    <h3 className="font-serif text-base font-bold text-text-primary">Popular Regions</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {POPULAR_REGIONS.map((region) => {
+                        const isActive = selectedRegion === region;
+                        return (
+                          <button
+                            key={region}
+                            onClick={() => {
+                              setSelectedRegion(isActive ? null : region);
+                              setShowMobileFilters(false);
+                            }}
+                            className={`px-2 py-1.5 text-xs font-medium rounded-md border text-center transition-all cursor-pointer ${isActive
+                                ? "bg-accent border-accent text-white shadow-sm"
+                                : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
+                              }`}
+                          >
+                            {region}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* EXPLORE THE MAP */}
+                  <div className="space-y-3">
+                    <h3 className="font-serif text-base font-bold text-text-primary">Explore the Map</h3>
+                    <DiscoverMap
+                      entries={filteredMapEntries}
+                      onBoundsChange={setMapBounds}
+                      selectedRegion={selectedRegion || ""}
+                    />
+                  </div>
+
+                  {/* TRENDING TAGS */}
+                  <div className="space-y-3">
+                    <h3 className="font-serif text-base font-bold text-text-primary">Trending Tags</h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      {trendingTags.map((tag) => {
+                        const isActive = selectedTag === tag;
+                        return (
+                          <button
+                            key={tag}
+                            onClick={() => {
+                              setSelectedTag(isActive ? null : tag);
+                              setShowMobileFilters(false);
+                            }}
+                            className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all cursor-pointer ${isActive
+                                ? "bg-accent border-accent text-white"
+                                : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
+                              }`}
+                          >
+                            #{tag}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Loading state */}
+              {isLoading ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                  <p className="text-text-body">Loading journologs...</p>
+                </div>
+              ) : error ? (
+                <div className="rounded-[8px] bg-white p-10 text-center shadow-card border border-black/5">
+                  <p className="text-red-600">{error}</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Active filters display */}
+                  {hasActiveFilters && (
+                    <div className="flex flex-wrap items-center gap-2 bg-white p-4 rounded-[8px] border border-black/5">
+                      <span className="text-xs font-semibold uppercase text-text-body/60">
+                        Active Filters:
+                      </span>
+                      {searchText && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
+                          Search: {searchText}
+                          <button onClick={() => setSearchText("")}> 
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      )}
+                      {selectedRegion && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
+                          Region: {selectedRegion}
+                          <button onClick={() => setSelectedRegion(null)}>
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      )}
+                      {selectedTag && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
+                          Tag: #{selectedTag}
+                          <button onClick={() => setSelectedTag(null)}>
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      )}
+
+                      <button
+                        onClick={clearAllFilters}
+                        className="text-xs text-text-body/80 hover:text-accent font-semibold underline cursor-pointer ml-auto"
+                      >
+                        Clear all
+                      </button>
+                    </div>
+                  )}
+
+                  {sortedJourneys.length === 0 ? (
+                    <div className="rounded-[8px] bg-white py-16 text-center shadow-card border border-black/5">
+                      <Search className="mx-auto h-12 w-12 text-gray-400" />
+                      <p className="mt-4 text-text-body font-medium">
+                        No journeys found matching your filters.
+                      </p>
+                      {hasActiveFilters && (
+                        <button
+                          onClick={clearAllFilters}
+                          className="mt-2 text-sm text-accent hover:underline font-semibold"
+                        >
+                          Reset filters
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="grid gap-6 sm:grid-cols-3">
+                      {sortedJourneys.map((journey) => {
+                        const journeyEntries = entries.filter((e) => e.journey_log === journey.id);
+                        const coverUrl = journey.cover_image
+                          ? pb.files.getURL(journey, journey.cover_image)
+                          : (journeyEntries.find((e) => e.cover_image)?.cover_image
+                            ? pb.files.getURL(
+                              journeyEntries.find((e) => e.cover_image)!,
+                              journeyEntries.find((e) => e.cover_image)!.cover_image!
+                            )
+                            : null);
+
+                        const user = journey.expand?.user;
+                        const avatarUrl = user?.avatar ? pb.files.getURL(user, user.avatar) : null;
+                        const locationText = [journey.country, journey.region]
+                          .filter(Boolean)
+                          .join(", ");
+
+                        return (
+                          <Link key={journey.id} href={`/j/${journey.slug}`} className="group">
+                            <div className="overflow-hidden rounded-[8px] bg-white shadow-card border border-black/5 hover:shadow-lg transition-all h-full flex flex-col">
+                              {/* Cover Image */}
+                              <div className="relative h-48 w-full overflow-hidden bg-gray-100 flex-shrink-0">
+                                {coverUrl ? (
+                                  <Image
+                                    src={coverUrl}
+                                    alt={journey.title}
+                                    fill
+                                    className="object-cover transition duration-300 group-hover:scale-105"
+                                    sizes="(max-width: 768px) 100vw, 350px"
+                                  />
+                                ) : (
+                                  <div className="h-full w-full bg-gradient-to-br from-primary/10 to-accent/10" />
+                                )}
+                              </div>
+
+                              <div className="p-5 flex flex-col flex-1">
+                                {/* Author Row */}
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div className="relative h-6 w-6 rounded-full overflow-hidden bg-gray-200">
+                                    {avatarUrl ? (
+                                      <Image
+                                        src={avatarUrl}
+                                        alt={user?.name || "Author"}
+                                        fill
+                                        sizes="24px"
+                                        className="object-cover"
+                                      />
+                                    ) : (
+                                      <div className="h-full w-full bg-primary/20 text-[10px] text-primary font-bold flex items-center justify-center uppercase">
+                                        {(user?.name || "A")[0]}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <span className="text-xs font-medium text-text-body">
+                                    {user?.name || "Anonymous"}
+                                  </span>
+                                </div>
+
+                                {/* Title */}
+                                <h3 className="font-serif text-xl font-bold text-text-primary group-hover:text-accent transition-colors leading-tight mb-2 line-clamp-1">
+                                  {journey.title}
+                                </h3>
+
+                                {/* Excerpt */}
+                                {journey.description && (
+                                  <p className="text-sm text-text-body line-clamp-2 leading-relaxed mb-4">
+                                    {journey.description}
+                                  </p>
+                                )}
+
+                                {/* Stats & Metadata Row */}
+                                <div className="mt-auto space-y-2.5 pt-3 border-t border-black/5">
+                                  <div className="flex items-center justify-between text-xs text-text-body/80">
+                                    <span>{formatDateRange(journey.start_date, journey.end_date)}</span>
+                                    <span className="font-medium">
+                                      {journeyEntries.length} {journeyEntries.length === 1 ? "entry" : "entries"}
+                                    </span>
+                                  </div>
+
+                                  {/* Location */}
+                                  {locationText && (
+                                    <div className="flex items-center gap-1.5 text-xs text-text-body font-medium">
+                                      <span>📍</span>
+                                      <span>{locationText}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Mobile collapsible filters container */}
-            {showMobileFilters && (
-              <div className="bg-white p-5 border border-black/5 rounded-[8px] space-y-6 md:hidden shadow-sm">
-                {/* POPULAR REGIONS */}
+            {/* Right Sidebar Filters */}
+            <aside className="hidden lg:block space-y-6">
+              {/* FIND A PLACE & POPULAR REGIONS */}
+              <div className="rounded-[8px] bg-white p-4 border border-black/5 shadow-card space-y-4">
                 <div className="space-y-3">
+                  <h2 className="font-serif text-base font-bold text-text-primary">Find a Place</h2>
+                  <p className="text-xs text-text-body">Search by location, country, or region.</p>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      placeholder="e.g. Iceland, Patagonia, Morocco..."
+                      className="w-full rounded-[6px] border border-gray-200 bg-white py-2 pl-3 pr-9 text-xs shadow-xs focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                    />
+                    <Search className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-gray-400" />
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-200 pt-4 space-y-3">
                   <h3 className="font-serif text-base font-bold text-text-primary">Popular Regions</h3>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     {POPULAR_REGIONS.map((region) => {
                       const isActive = selectedRegion === region;
                       return (
                         <button
                           key={region}
-                          onClick={() => {
-                            setSelectedRegion(isActive ? null : region);
-                            setShowMobileFilters(false);
-                          }}
+                          onClick={() => setSelectedRegion(isActive ? null : region)}
                           className={`px-2 py-1.5 text-xs font-medium rounded-md border text-center transition-all cursor-pointer ${isActive
                               ? "bg-accent border-accent text-white shadow-sm"
                               : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
@@ -382,10 +644,13 @@ export function DiscoverClient() {
                     })}
                   </div>
                 </div>
+              </div>
 
-                {/* EXPLORE THE MAP */}
+              {/* EXPLORE THE MAP & TRENDING TAGS */}
+              <div className="rounded-[8px] bg-white p-4 border border-black/5 shadow-card space-y-4">
                 <div className="space-y-3">
-                  <h3 className="font-serif text-base font-bold text-text-primary">Explore the Map</h3>
+                  <h2 className="font-serif text-base font-bold text-text-primary">Explore the Map</h2>
+                  <p className="text-xs text-text-body">Browse journologs from around the world.</p>
                   <DiscoverMap
                     entries={filteredMapEntries}
                     onBoundsChange={setMapBounds}
@@ -393,8 +658,7 @@ export function DiscoverClient() {
                   />
                 </div>
 
-                {/* TRENDING TAGS */}
-                <div className="space-y-3">
+                <div className="border-t border-gray-200 pt-4 space-y-3">
                   <h3 className="font-serif text-base font-bold text-text-primary">Trending Tags</h3>
                   <div className="flex flex-wrap gap-1.5">
                     {trendingTags.map((tag) => {
@@ -402,10 +666,7 @@ export function DiscoverClient() {
                       return (
                         <button
                           key={tag}
-                          onClick={() => {
-                            setSelectedTag(isActive ? null : tag);
-                            setShowMobileFilters(false);
-                          }}
+                          onClick={() => setSelectedTag(isActive ? null : tag)}
                           className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all cursor-pointer ${isActive
                               ? "bg-accent border-accent text-white"
                               : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
@@ -418,249 +679,21 @@ export function DiscoverClient() {
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* Loading state */}
-            {isLoading ? (
-              <div className="flex flex-col items-center justify-center py-20 gap-3">
-                <Loader2 className="h-8 w-8 animate-spin text-accent" />
-                <p className="text-text-body">Loading journologs...</p>
+              {/* QUOTE */}
+              <div className="rounded-[8px] bg-[#FAF8F5] p-5 border border-[#E9E4DC] text-center space-y-3 relative overflow-hidden">
+                <div className="text-accent text-2xl font-serif leading-none">✦</div>
+                <blockquote className="font-serif italic text-text-primary leading-relaxed text-xs">
+                  &ldquo;The world is a book and those who do not travel read only one page.&rdquo;
+                </blockquote>
+                <cite className="block text-xs font-semibold text-text-body uppercase tracking-wider not-italic">
+                  &mdash; Saint Augustine
+                </cite>
               </div>
-            ) : error ? (
-              <div className="rounded-[8px] bg-white p-10 text-center shadow-card border border-black/5">
-                <p className="text-red-600">{error}</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {/* Active filters display */}
-                {hasActiveFilters && (
-                  <div className="flex flex-wrap items-center gap-2 bg-white p-4 rounded-[8px] border border-black/5">
-                    <span className="text-xs font-semibold uppercase text-text-body/60">
-                      Active Filters:
-                    </span>
-                    {searchText && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
-                        Search: {searchText}
-                        <button onClick={() => setSearchText("")}>
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    )}
-                    {selectedRegion && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
-                        Region: {selectedRegion}
-                        <button onClick={() => setSelectedRegion(null)}>
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    )}
-                    {selectedTag && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
-                        Tag: #{selectedTag}
-                        <button onClick={() => setSelectedTag(null)}>
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    )}
-
-                    <button
-                      onClick={clearAllFilters}
-                      className="text-xs text-text-body/80 hover:text-accent font-semibold underline cursor-pointer ml-auto"
-                    >
-                      Clear all
-                    </button>
-                  </div>
-                )}
-
-                {sortedJourneys.length === 0 ? (
-                  <div className="rounded-[8px] bg-white py-16 text-center shadow-card border border-black/5">
-                    <Search className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="mt-4 text-text-body font-medium">
-                      No journeys found matching your filters.
-                    </p>
-                    {hasActiveFilters && (
-                      <button
-                        onClick={clearAllFilters}
-                        className="mt-2 text-sm text-accent hover:underline font-semibold"
-                      >
-                        Reset filters
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    {sortedJourneys.map((journey) => {
-                      const journeyEntries = entries.filter((e) => e.journey_log === journey.id);
-                      const coverUrl = journey.cover_image
-                        ? pb.files.getURL(journey, journey.cover_image)
-                        : (journeyEntries.find((e) => e.cover_image)?.cover_image
-                          ? pb.files.getURL(
-                            journeyEntries.find((e) => e.cover_image)!,
-                            journeyEntries.find((e) => e.cover_image)!.cover_image!
-                          )
-                          : null);
-
-                      const user = journey.expand?.user;
-                      const avatarUrl = user?.avatar ? pb.files.getURL(user, user.avatar) : null;
-                      const locationText = [journey.country, journey.region]
-                        .filter(Boolean)
-                        .join(", ");
-
-                      return (
-                        <Link key={journey.id} href={`/j/${journey.slug}`} className="group">
-                          <div className="overflow-hidden rounded-[8px] bg-white shadow-card border border-black/5 hover:shadow-lg transition-all h-full flex flex-col">
-                            {/* Cover Image */}
-                            <div className="relative h-48 w-full overflow-hidden bg-gray-100 flex-shrink-0">
-                              {coverUrl ? (
-                                <Image
-                                  src={coverUrl}
-                                  alt={journey.title}
-                                  fill
-                                  className="object-cover transition duration-300 group-hover:scale-105"
-                                  sizes="(max-width: 768px) 100vw, 350px"
-                                />
-                              ) : (
-                                <div className="h-full w-full bg-gradient-to-br from-primary/10 to-accent/10" />
-                              )}
-                            </div>
-
-                            <div className="p-5 flex flex-col flex-1">
-                              {/* Author Row */}
-                              <div className="flex items-center gap-2 mb-3">
-                                <div className="relative h-6 w-6 rounded-full overflow-hidden bg-gray-200">
-                                  {avatarUrl ? (
-                                    <Image
-                                      src={avatarUrl}
-                                      alt={user?.name || "Author"}
-                                      fill
-                                      sizes="24px"
-                                      className="object-cover"
-                                    />
-                                  ) : (
-                                    <div className="h-full w-full bg-primary/20 text-[10px] text-primary font-bold flex items-center justify-center uppercase">
-                                      {(user?.name || "A")[0]}
-                                    </div>
-                                  )}
-                                </div>
-                                <span className="text-xs font-medium text-text-body">
-                                  {user?.name || "Anonymous"}
-                                </span>
-                              </div>
-
-                              {/* Title */}
-                              <h3 className="font-serif text-xl font-bold text-text-primary group-hover:text-accent transition-colors leading-tight mb-2 line-clamp-1">
-                                {journey.title}
-                              </h3>
-
-                              {/* Excerpt */}
-                              {journey.description && (
-                                <p className="text-sm text-text-body line-clamp-2 leading-relaxed mb-4">
-                                  {journey.description}
-                                </p>
-                              )}
-
-                              {/* Stats & Metadata Row */}
-                              <div className="mt-auto space-y-2.5 pt-3 border-t border-black/5">
-                                <div className="flex items-center justify-between text-xs text-text-body/80">
-                                  <span>{formatDateRange(journey.start_date, journey.end_date)}</span>
-                                  <span className="font-medium">
-                                    {journeyEntries.length} {journeyEntries.length === 1 ? "entry" : "entries"}
-                                  </span>
-                                </div>
-
-                                {/* Location */}
-                                {locationText && (
-                                  <div className="flex items-center gap-1.5 text-xs text-text-body font-medium">
-                                    <span>📍</span>
-                                    <span>{locationText}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
+            </aside>
           </div>
-
-          {/* Right Sidebar Filters */}
-          <aside className="hidden lg:block space-y-6">
-            {/* POPULAR REGIONS */}
-            <div className="rounded-[8px] bg-white p-5 border border-black/5 shadow-card space-y-4">
-              <h2 className="font-serif text-lg font-bold text-text-primary">Popular Regions</h2>
-              <div className="grid grid-cols-2 gap-2">
-                {POPULAR_REGIONS.map((region) => {
-                  const isActive = selectedRegion === region;
-                  return (
-                    <button
-                      key={region}
-                      onClick={() => setSelectedRegion(isActive ? null : region)}
-                      className={`px-3 py-2 text-xs font-medium rounded-md border text-center transition-all cursor-pointer ${isActive
-                          ? "bg-accent border-accent text-white shadow-sm"
-                          : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
-                        }`}
-                    >
-                      {region}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* EXPLORE THE MAP */}
-            <div className="rounded-[8px] bg-white p-5 border border-black/5 shadow-card space-y-4">
-              <div>
-                <h2 className="font-serif text-lg font-bold text-text-primary">Explore the Map</h2>
-                <p className="text-xs text-text-body mt-1 leading-relaxed">
-                  Browse journologs from around the world.
-                </p>
-              </div>
-              <DiscoverMap
-                entries={filteredMapEntries}
-                onBoundsChange={setMapBounds}
-                selectedRegion={selectedRegion || ""}
-              />
-            </div>
-
-            {/* TRENDING TAGS */}
-            <div className="rounded-[8px] bg-white p-5 border border-black/5 shadow-card space-y-4">
-              <h2 className="font-serif text-lg font-bold text-text-primary">Trending Tags</h2>
-              <div className="flex flex-wrap gap-1.5">
-                {trendingTags.map((tag) => {
-                  const isActive = selectedTag === tag;
-                  return (
-                    <button
-                      key={tag}
-                      onClick={() => setSelectedTag(isActive ? null : tag)}
-                      className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all cursor-pointer ${isActive
-                          ? "bg-accent border-accent text-white"
-                          : "bg-white border-gray-200 text-text-body hover:bg-gray-50"
-                        }`}
-                    >
-                      #{tag}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* SAINT AUGUSTINE QUOTE */}
-            <div className="rounded-[8px] bg-[#FAF8F5] p-6 border border-[#E9E4DC] text-center space-y-4 relative overflow-hidden">
-              <div className="text-accent text-2xl font-serif leading-none">✦</div>
-              <blockquote className="font-serif italic text-text-primary leading-relaxed text-sm">
-                &ldquo;The world is a book and those who do not travel read only one page.&rdquo;
-              </blockquote>
-              <cite className="block text-xs font-semibold text-text-body uppercase tracking-wider not-italic">
-                &mdash; Saint Augustine
-              </cite>
-            </div>
-          </aside>
         </div>
-      </div>
+      </section>
     </main>
   );
 }
