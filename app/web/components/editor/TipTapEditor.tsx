@@ -4,12 +4,14 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import Link from "@tiptap/extension-link";
 import {
   Bold,
   Heading2,
   Heading3,
   ImagePlus,
   Italic,
+  Link as LinkIcon,
 } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { pb } from "@/lib/pocketbase";
@@ -36,6 +38,14 @@ export function TipTapEditor({ content, onChange, journeyLogId }: TipTapEditorPr
       }),
       Placeholder.configure({
         placeholder: "Begin writing your entry...",
+      }),
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        defaultProtocol: "https",
+        HTMLAttributes: {
+          class: "text-accent underline hover:text-accent/80 transition-colors",
+        },
       }),
     ],
     content: content && Object.keys(content).length > 0 ? content : "", // Handled empty object gracefully on init
@@ -118,6 +128,26 @@ console.log("isValid:", pb.authStore.isValid);
     input.click();
   }, [editor, journeyLogId]);
 
+  const setLink = useCallback(() => {
+    if (!editor) return;
+    const previousUrl = editor.getAttributes("link").href;
+    const url = window.prompt("Enter URL:", previousUrl);
+
+    // Cancelled prompt
+    if (url === null) {
+      return;
+    }
+
+    // Empty URL = remove link
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      return;
+    }
+
+    // Add or update link
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  }, [editor]);
+
   if (!editor) {
     return (
       <div className="min-h-[360px] rounded-[8px] border border-black/10 bg-white p-4">
@@ -142,6 +172,13 @@ console.log("isValid:", pb.authStore.isValid);
           label="Italic"
         >
           <Italic className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          active={editor.isActive("link")}
+          onClick={setLink}
+          label="Link"
+        >
+          <LinkIcon className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive("heading", { level: 2 })}
