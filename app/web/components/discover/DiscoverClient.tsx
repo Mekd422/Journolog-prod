@@ -518,7 +518,8 @@ export function DiscoverClient() {
                             )
                             : null);
 
-                        const user = journey.expand?.user;
+                        const userRaw = journey.expand?.user;
+                        const user = Array.isArray(userRaw) ? userRaw[0] : userRaw;
                         const avatarUrl = user?.avatar ? pb.files.getURL(user, user.avatar) : null;
                         const locationText = [journey.country, journey.region]
                           .filter(Boolean)
