@@ -52,7 +52,13 @@ export function JourneyOverview({ log, entries }: JourneyOverviewProps) {
                 <p className="mt-1 text-sm text-text-body">{locationText}</p>
               ) : null}
               {log.description ? (
-                <p className="mt-4 max-w-3xl text-text-body">{log.description}</p>
+                <div className="mt-4 space-y-3">
+                  {log.description.split(/\r?\n/).filter(para => para.trim() !== "").map((para, index) => (
+                    <p key={index} className="max-w-3xl text-text-body">
+                      {para}
+                    </p>
+                  ))}
+                </div>
               ) : null}
             </div>
 
