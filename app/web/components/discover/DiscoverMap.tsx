@@ -64,7 +64,8 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
         .filter((e) => e.latitude != null && e.longitude != null)
         .map((e) => {
           const journey = e.expand?.journey_log;
-          const user = e.expand?.user;
+          const userRaw = e.expand?.user;
+          const user = Array.isArray(userRaw) ? userRaw[0] : userRaw;
           const coverImageUrl = e.cover_image
             ? pb.files.getURL(e, e.cover_image)
             : (journey?.cover_image
@@ -248,7 +249,8 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
         .filter((e) => e.latitude != null && e.longitude != null)
         .map((e) => {
           const journey = e.expand?.journey_log;
-          const user = e.expand?.user;
+          const userRaw = e.expand?.user;
+          const user = Array.isArray(userRaw) ? userRaw[0] : userRaw;
           const coverImageUrl = e.cover_image
             ? pb.files.getURL(e, e.cover_image)
             : (journey?.cover_image
