@@ -7,6 +7,7 @@ import Image from "next/image";
 import { pb } from "@/lib/pocketbase";
 import { geocodePlace, type MapboxGeocodingResult } from "@/lib/mapbox";
 import type { Entry, Tag } from "@/types";
+import { compressImage } from "@/lib/files";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { TipTapEditor } from "@/components/editor/TipTapEditor";
@@ -136,14 +137,22 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
   }
 
   // Cover image handlers
-  function handleCoverChange(file: File | null) {
-    setCoverFile(file);
-    setCoverDeleted(file === null);
+  async function handleCoverChange(file: File | null) {
     if (file) {
-      setCoverUrl(URL.createObjectURL(file));
+      try {
+        const compressed = await compressImage(file);
+        setCoverFile(compressed);
+        setCoverUrl(URL.createObjectURL(compressed));
+      } catch (err) {
+        console.error("Error compressing cover image:", err);
+        setCoverFile(file);
+        setCoverUrl(URL.createObjectURL(file));
+      }
     } else {
+      setCoverFile(null);
       setCoverUrl(null);
     }
+    setCoverDeleted(file === null);
   }
 
   // Resolve tag names to database IDs

@@ -16,6 +16,7 @@ import {
 import { useCallback, useEffect } from "react";
 import { pb } from "@/lib/pocketbase";
 import { cn } from "@/lib/utils";
+import { compressImage } from "@/lib/files";
 
 interface TipTapEditorProps {
   content?: Record<string, unknown>;
@@ -95,17 +96,24 @@ export function TipTapEditor({ content, onChange, journeyLogId }: TipTapEditorPr
       const file = input.files?.[0];
       if (!file) return;
 
+      let uploadFile = file;
+      try {
+        uploadFile = await compressImage(file);
+      } catch (err) {
+        console.error("Error compressing inline image:", err);
+      }
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", uploadFile);
       formData.append("user", userId);
       formData.append("journey_log", journeyLogId);
       formData.append("type", "image");
 
       console.log("journeyLogId:", journeyLogId);
-console.log("token:", pb.authStore.token);
-console.log("model:", pb.authStore.model);
-console.log("record:", pb.authStore.record);
-console.log("isValid:", pb.authStore.isValid);
+      console.log("token:", pb.authStore.token);
+      console.log("model:", pb.authStore.model);
+      console.log("record:", pb.authStore.record);
+      console.log("isValid:", pb.authStore.isValid);
 
       try {
         const record = await pb.collection("media").create(formData);

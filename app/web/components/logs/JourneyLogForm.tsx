@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { pb } from "@/lib/pocketbase";
 import { uniqueSlug } from "@/lib/slug";
+import { compressImage } from "@/lib/files";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -138,7 +139,15 @@ export function JourneyLogForm() {
           id="cover"
           type="file"
           accept="image/*"
-          onChange={(event) => setCover(event.target.files?.[0] ?? null)}
+          onChange={async (event) => {
+            const file = event.target.files?.[0] ?? null;
+            if (file) {
+              const compressed = await compressImage(file);
+              setCover(compressed);
+            } else {
+              setCover(null);
+            }
+          }}
           className="block w-full text-sm text-text-body file:mr-4 file:rounded-[4px] file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-primary/90"
         />
         {cover ? (

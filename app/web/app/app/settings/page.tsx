@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Upload, Loader2, Check } from "lucide-react";
 import { pb } from "@/lib/pocketbase";
+import { compressImage } from "@/lib/files";
 import { useAuth } from "@/context/AuthContext";
 import type { User } from "@/types";
 import { Button } from "@/components/ui/Button";
@@ -60,7 +61,7 @@ export default function SettingsPage() {
     }
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -71,27 +72,37 @@ export default function SettingsPage() {
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
+      try {
+        const compressed = await compressImage(file);
+
+        if (compressed.size > 5 * 1024 * 1024) {
+          setErrors((prev) => ({
+            ...prev,
+            avatar: "File size must be less than 5MB",
+          }));
+          return;
+        }
+
+        setAvatarFile(compressed);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setAvatarPreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(compressed);
+
+        if (errors.avatar) {
+          setErrors((prev) => {
+            const newErrors = { ...prev };
+            delete newErrors.avatar;
+            return newErrors;
+          });
+        }
+      } catch (err) {
+        console.error("Error compressing avatar:", err);
         setErrors((prev) => ({
           ...prev,
-          avatar: "File size must be less than 5MB",
+          avatar: "Error processing image",
         }));
-        return;
-      }
-
-      setAvatarFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setAvatarPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      if (errors.avatar) {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors.avatar;
-          return newErrors;
-        });
       }
     }
   };

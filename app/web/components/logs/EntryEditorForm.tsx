@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { pb } from "@/lib/pocketbase";
 import { geocodePlace, type MapboxGeocodingResult } from "@/lib/mapbox";
+import { compressImage } from "@/lib/files";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { TipTapEditor } from "@/components/editor/TipTapEditor";
@@ -126,11 +127,19 @@ export function EntryEditorForm({ journeyLogId }: EntryEditorFormProps) {
   }
 
   // Cover image handler
-  function handleCoverChange(file: File | null) {
-    setCoverFile(file);
+  async function handleCoverChange(file: File | null) {
     if (file) {
-      setCoverUrl(URL.createObjectURL(file));
+      try {
+        const compressed = await compressImage(file);
+        setCoverFile(compressed);
+        setCoverUrl(URL.createObjectURL(compressed));
+      } catch (err) {
+        console.error("Error compressing cover image:", err);
+        setCoverFile(file);
+        setCoverUrl(URL.createObjectURL(file));
+      }
     } else {
+      setCoverFile(null);
       setCoverUrl(null);
     }
   }

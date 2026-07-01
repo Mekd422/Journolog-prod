@@ -186,8 +186,8 @@ export function DiscoverMap({ entries, onBoundsChange, selectedRegion }: Discove
             ${
               props.coverImage
                 ? `<div style="position: relative; width: 100%; height: 96px; margin-bottom: 8px; border-radius: 4px; overflow: hidden; background: #e5e7eb;">
-                     <img src="${props.coverImage}" style="width: 100%; height: 100%; object-fit: cover;" alt="${props.title}" />
-                   </div>`
+                    <img src="${props.coverImage}" style="width: 100%; height: 100%; object-fit: cover;" alt="${props.title}" />
+                  </div>`
                 : ""
             }
             <h4 style="margin: 0 0 6px 0; font-family: var(--font-serif), Georgia, serif; font-size: 14px; font-weight: 700; color: #1a1a1a; line-height: 1.3;">

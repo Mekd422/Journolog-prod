@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { pb } from "@/lib/pocketbase";
+import { compressImage } from "@/lib/files";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -35,14 +36,22 @@ export function JourneyEditForm({ log }: JourneyEditFormProps) {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleCoverChange(file: File | null) {
-    setCoverFile(file);
-    setCoverDeleted(file === null);
+  async function handleCoverChange(file: File | null) {
     if (file) {
-      setCoverUrl(URL.createObjectURL(file));
+      try {
+        const compressed = await compressImage(file);
+        setCoverFile(compressed);
+        setCoverUrl(URL.createObjectURL(compressed));
+      } catch (err) {
+        console.error("Error compressing cover image:", err);
+        setCoverFile(file);
+        setCoverUrl(URL.createObjectURL(file));
+      }
     } else {
+      setCoverFile(null);
       setCoverUrl(null);
     }
+    setCoverDeleted(file === null);
   }
 
   async function handleSubmit(event: FormEvent) {
