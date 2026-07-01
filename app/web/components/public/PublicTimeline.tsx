@@ -61,9 +61,13 @@ export function PublicHero({
       </p>
       <h1 className="mt-3 font-serif text-5xl text-text-primary">{title}</h1>
       {description ? (
-        <p className="mt-5 max-w-3xl text-lg leading-relaxed text-text-body">
-          {description}
-        </p>
+        <div className="mt-5 space-y-4">
+          {description.split(/\r?\n/).filter(para => para.trim() !== "").map((para, index) => (
+            <p key={index} className="max-w-3xl text-lg leading-relaxed text-text-body">
+              {para}
+            </p>
+          ))}
+        </div>
       ) : null}
     </header>
   );

@@ -7,7 +7,7 @@ type TipTapNode = {
   text?: string;
   attrs?: Record<string, string>;
   content?: TipTapNode[];
-  marks?: Array<{ type: string }>;
+  marks?: Array<{ type: string; attrs?: Record<string, string> }>;
 };
 
 function renderMarks(text: string, marks?: TipTapNode["marks"]) {
@@ -19,6 +19,18 @@ function renderMarks(text: string, marks?: TipTapNode["marks"]) {
     }
     if (mark.type === "italic") {
       return <em>{node}</em>;
+    }
+    if (mark.type === "link") {
+      return (
+        <a
+          href={mark.attrs?.href || ""}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent underline hover:text-accent/80 transition-colors"
+        >
+          {node}
+        </a>
+      );
     }
     return node;
   }, text);
@@ -59,6 +71,8 @@ function renderNode(node: TipTapNode, index: number): React.ReactNode {
       );
     case "text":
       return <span key={index}>{renderMarks(node.text ?? "", node.marks)}</span>;
+    case "hardBreak":
+      return <br key={index} />;
     case "image":
       return node.attrs?.src ? (
         <div key={index} className="relative my-8 aspect-[16/9] overflow-hidden rounded-[8px]">
