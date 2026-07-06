@@ -75,13 +75,12 @@ function renderNode(node: TipTapNode, index: number): React.ReactNode {
       return <br key={index} />;
     case "image":
       return node.attrs?.src ? (
-        <div key={index} className="relative my-8 aspect-[16/9] overflow-hidden rounded-[8px]">
-          <Image
+        <div key={index} className="my-8 overflow-hidden rounded-[8px]">
+          <img
             src={node.attrs.src}
             alt={node.attrs.alt ?? "Entry image"}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 768px"
+            className="w-full h-auto max-h-[650px] object-contain rounded-[8px] mx-auto block"
+            loading="lazy"
           />
         </div>
       ) : null;
