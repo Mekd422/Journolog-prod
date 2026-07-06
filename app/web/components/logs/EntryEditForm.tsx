@@ -427,7 +427,14 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
               {/* Map Preview */}
               {latitude !== null && longitude !== null && (
                 <div className="h-40 w-full rounded-[8px] overflow-hidden border border-black/5 mt-2">
-                  <LocationMapPreview latitude={latitude} longitude={longitude} />
+                  <LocationMapPreview
+                    latitude={latitude}
+                    longitude={longitude}
+                    onChange={(lat, lng) => {
+                      setLatitude(lat);
+                      setLongitude(lng);
+                    }}
+                  />
                 </div>
               )}
 
