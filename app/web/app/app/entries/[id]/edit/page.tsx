@@ -28,6 +28,12 @@ export default function EditEntryPage({
         const record = await pb.collection("entries").getOne(entryId, {
           expand: "tags",
         });
+
+        if (record.user !== pb.authStore.record?.id) {
+          setError("You do not have permission to edit this entry.");
+          return;
+        }
+
         setEntry(record as Entry);
       } catch (err) {
         console.error("Error loading entry:", err);
