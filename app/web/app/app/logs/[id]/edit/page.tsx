@@ -23,6 +23,12 @@ export default function EditJourneyPage({
     async function loadLog() {
       try {
         const record = await pb.collection("journey_logs").getOne(logId);
+
+        if (record.user !== pb.authStore.record?.id) {
+          setError("You do not have permission to edit this journey log.");
+          return;
+        }
+
         setLog(record as JourneyLog);
       } catch (err) {
         console.error("Error loading journey log:", err);
