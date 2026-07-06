@@ -5,7 +5,7 @@ import { createServerPocketBase } from "@/lib/pocketbase-server";
 import { getFileUrl } from "@/lib/files";
 import { PublicHero, PublicTimeline } from "@/components/public/PublicTimeline";
 import { JourneyMap } from "@/components/public/JourneyMap";
-import type { Entry, JourneyLog } from "@/types";
+import type { Entry, JourneyLog, User } from "@/types";
 
 export const revalidate = 60;
 
@@ -20,6 +20,7 @@ export async function generateMetadata({
   try {
     const logs = await pb.collection("journey_logs").getList<JourneyLog>(1, 1, {
       filter: `slug = "${slug}" && status = "public"`,
+      expand: "user",
     });
 
     if (!logs.items.length) {
@@ -62,6 +63,7 @@ export default async function PublicJourneyPage({
   try {
     const logs = await pb.collection("journey_logs").getList<JourneyLog>(1, 1, {
       filter: `slug = "${slug}" && status = "public"`,
+      expand: "user",
     });
 
     if (!logs.items.length) {
@@ -103,6 +105,8 @@ export default async function PublicJourneyPage({
           description={log.description}
           countryRegion={[log.country, log.region].filter(Boolean).join(", ")}
           coverUrl={coverUrl}
+          authorName={(log.expand?.user as User | undefined)?.name}
+          authorUsername={(log.expand?.user as User | undefined)?.public_profile_slug}
         />
 
         {entries.some((e) => e.show_on_map && e.latitude && e.longitude) && (
