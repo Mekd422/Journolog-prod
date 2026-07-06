@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { formatTimelineDate } from "@/lib/dates";
 import type { Entry } from "@/types";
@@ -36,11 +37,15 @@ export function PublicHero({
   description,
   countryRegion,
   coverUrl,
+  authorName,
+  authorUsername,
 }: {
   title: string;
   description?: string;
   countryRegion?: string;
   coverUrl?: string | null;
+  authorName?: string;
+  authorUsername?: string;
 }) {
   return (
     <header className="mb-16">
@@ -56,9 +61,26 @@ export function PublicHero({
           />
         </div>
       ) : null}
-      <p className="text-sm uppercase tracking-[0.2em] text-accent">
-        {countryRegion ?? "Travel Journal"}
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <p className="text-sm uppercase tracking-[0.2em] text-accent">
+          {countryRegion ?? "Travel Journal"}
+        </p>
+        {authorName && (
+          <div className="text-sm text-text-body">
+            by{" "}
+            {authorUsername ? (
+              <Link
+                href={`/u/${authorUsername}`}
+                className="font-medium text-accent hover:underline transition-colors"
+              >
+                {authorName}
+              </Link>
+            ) : (
+              <span className="font-medium text-text-primary">{authorName}</span>
+            )}
+          </div>
+        )}
+      </div>
       <h1 className="mt-3 font-serif text-5xl text-text-primary">{title}</h1>
       {description ? (
         <div className="mt-5 space-y-4">
