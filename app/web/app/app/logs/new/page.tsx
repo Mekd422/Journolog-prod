@@ -34,7 +34,7 @@ export default function NewJourneyLogPage() {
           If your trip was brief, a single entry is all you need, or you can build a rich, chronological timeline with many entries over the course of your journey.
         </p>
         <div className="mt-4 border-t border-accent/10 pt-3 text-xs text-text-body/80">
-          <span className="font-semibold text-accent">💡 The Flow:</span> Your Journey Log's dates define the overall span of your trip. As you add Entries, each entry is pinned to its own date (or sub-range) and is automatically plotted onto your interactive journey timeline in chronological order.
+          <span className="font-semibold text-accent">💡 The Flow:</span> Your Journey Log&apos;s dates define the overall span of your trip. As you add Entries, each entry is pinned to its own date (or sub-range) and is automatically plotted onto your interactive journey timeline in chronological order.
         </div>
       </div>
 
