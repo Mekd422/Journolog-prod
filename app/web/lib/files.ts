@@ -20,7 +20,7 @@ export function getFileUrl(
 /**
  * Compresses an image file client-side using Canvas.
  * Resizes the image to fit within maxWidth/maxHeight (maintaining aspect ratio),
- * and compresses it to JPEG at a specified quality.
+ * and compresses it to WebP at a specified quality.
  */
 export async function compressImage(
   file: File,
@@ -33,7 +33,7 @@ export async function compressImage(
     return file;
   }
 
-  // GIFs and SVGs don't compress well via canvas JPEG compression; keep them original
+  // GIFs and SVGs don't compress well via canvas WebP compression; keep them original
   if (file.type === "image/gif" || file.type === "image/svg+xml") {
     return file;
   }
@@ -77,17 +77,17 @@ export async function compressImage(
               resolve(file);
               return;
             }
-            // Keep original filename, but ensure extension/type matches jpeg compression
-            const newName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+            // Keep original filename, but ensure extension/type matches webp compression
+            const newName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
             const compressedFile = new File([blob], newName, {
-              type: "image/jpeg",
+              type: "image/webp",
               lastModified: Date.now(),
             });
 
             // Only return compressed file if it's actually smaller
             resolve(compressedFile.size < file.size ? compressedFile : file);
           },
-          "image/jpeg",
+          "image/webp",
           quality
         );
       };
