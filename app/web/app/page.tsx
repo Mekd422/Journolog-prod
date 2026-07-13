@@ -408,8 +408,8 @@ export default function HomePage() {
       <footer className="bg-[#1C201C] text-gray-400 py-16 text-xs border-t border-[#2F342F]">
         <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="flex gap-6 font-semibold uppercase tracking-widest text-[10px]">
-            <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms</Link>
+            <Link href="/policy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
             <Link href="#" className="hover:text-white transition-colors">About</Link>
             <Link href="#" className="hover:text-white transition-colors">Support</Link>
           </div>
