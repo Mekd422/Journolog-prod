@@ -366,7 +366,7 @@ export default function HomePage() {
                 <span className="text-gray-550 text-xs font-mono uppercase">/ Free Forever</span>
               </div>
               <ul className="mt-8 space-y-4 border-t border-gray-100 pt-6 text-sm text-gray-600 font-serif">
-                <li className="flex items-center gap-2"><Check size={14} className="text-emerald-600 stroke-[3]" /> Capped storage (1 GB)</li>
+                <li className="flex items-center gap-2"><Check size={14} className="text-emerald-600 stroke-[3]" /> Capped storage (50 MB)</li>
                 <li className="flex items-center gap-2"><Check size={14} className="text-emerald-600 stroke-[3]" /> Web editor access</li>
                 <li className="flex items-center gap-2"><Check size={14} className="text-emerald-600 stroke-[3]" /> Max file size up to 5MB</li>
                 <li className="flex items-center gap-2"><Check size={14} className="text-emerald-600 stroke-[3]" /> Community support forum</li>
@@ -386,10 +386,10 @@ export default function HomePage() {
               <h3 className="font-serif text-xl font-medium text-gray-900">Elite Navigator</h3>
               <p className="text-xs text-[#BA4A29] mt-1 font-mono uppercase">Unlimited travel logs</p>
               <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-4xl font-serif font-bold text-gray-900">$4.99</span>
-                <span className="text-gray-550 text-xs font-mono uppercase">/ Monthly</span>
+                <span className="text-4xl font-serif font-bold text-gray-900">$19.95</span>
+                <span className="text-gray-550 text-xs font-mono uppercase">/ Year</span>
               </div>
-              <p className="text-[10px] text-gray-400 mt-1 font-mono uppercase">Billed annually</p>
+              <p className="text-[10px] text-gray-400 mt-1 font-mono uppercase">Renewed automatically</p>
               <ul className="mt-5 space-y-4 border-t border-gray-100 pt-6 text-sm text-gray-600 font-serif">
                 <li className="flex items-center gap-2"><Check size={14} className="text-[#BA4A29] stroke-[3]" /> Unlimited email-to-log uploads</li>
                 <li className="flex items-center gap-2"><Check size={14} className="text-[#BA4A29] stroke-[3]" /> Large video uploads (up to 250MB)</li>
