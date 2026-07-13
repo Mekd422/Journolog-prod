@@ -114,7 +114,7 @@ export function PrivacyPolicyClient() {
                 <strong className="text-gray-900 font-serif text-base">Public Journeys:</strong> These are open to the internet. Anyone with the link can view your timeline, look at your maps, and leave emoji reactions or comments.
               </li>
               <li>
-                <strong className="text-gray-900 font-serif text-base">Private Journeys:</strong> These are hidden behind a password wall. Visitors cannot view any text, photos, videos, or map coordinates without typing in the access password you created. The actual journal data is securely masked on our servers until the correct password unlocks it.
+                <strong className="text-gray-900 font-serif text-base">Private Journeys:</strong> These are kept private to your account. Visitors cannot view any text, photos, videos, or map coordinates.
               </li>
             </ul>
           </section>

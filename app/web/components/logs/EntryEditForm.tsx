@@ -194,46 +194,52 @@ export function EntryEditForm({ entry }: EntryEditFormProps) {
     try {
       const tagIds = await resolveTagIds(entryTags);
 
-      const formData = new FormData();
-      formData.append("title", title.trim() || "Untitled");
-      formData.append("entry_date", entryDate);
-      formData.append("show_on_map", String(showOnMap));
-      formData.append("body_json", JSON.stringify(bodyJson));
-      formData.append("body_html", bodyHtml);
-      formData.append("status", status);
+      const data: any = {
+        title: title.trim() || "Untitled",
+        entry_date: entryDate,
+        show_on_map: showOnMap,
+        body_json: bodyJson,
+        body_html: bodyHtml,
+        status: status,
+        excerpt: excerpt.trim(),
+        tags: tagIds,
+      };
 
-      if (endDate) formData.append("end_date", endDate);
-      if (locationName) formData.append("location_name", locationName);
-      if (latitude !== null) formData.append("latitude", String(latitude));
-      if (longitude !== null) formData.append("longitude", String(longitude));
-      
+      if (endDate) {
+        data.end_date = endDate;
+      } else {
+        data.end_date = "";
+      }
+
+      if (locationName) {
+        data.location_name = locationName;
+        data.latitude = latitude;
+        data.longitude = longitude;
+      } else {
+        data.location_name = "";
+        data.latitude = null;
+        data.longitude = null;
+      }
+
       // Handle deletion or update of cover image
       if (coverDeleted) {
-        formData.append("cover_image", ""); // clears the file in PocketBase
+        data.cover_image = null;
       } else if (coverFile) {
-        formData.append("cover_image", coverFile);
+        data.cover_image = coverFile;
       }
 
-      formData.append("excerpt", excerpt.trim());
-
-      // Set tags
-      // PocketBase accepts multiple tags appended to the same key or array format
-      if (tagIds.length === 0) {
-        // Clear relations in PocketBase by appending empty value or setting field to empty array
-        formData.append("tags", "");
-      } else {
-        tagIds.forEach((id) => {
-          formData.append("tags", id);
-        });
-      }
-
-      await pb.collection("entries").update(entry.id, formData);
+      await pb.collection("entries").update(entry.id, data);
 
       router.push(`/app/logs/${entry.journey_log}`);
       router.refresh();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Could not save changes. Please try again.");
+      const pocketbaseErrorMsg = err.response?.data 
+        ? Object.entries(err.response.data)
+            .map(([field, detail]: any) => `${field}: ${detail.message}`)
+            .join(", ")
+        : err.message || "Unknown error";
+      setError(`Could not save changes. Error: ${pocketbaseErrorMsg}`);
     } finally {
       setIsSubmitting(false);
     }

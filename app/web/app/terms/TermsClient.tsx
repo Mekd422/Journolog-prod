@@ -85,7 +85,7 @@ export function TermsOfUseClient() {
                 <strong className="text-gray-900 font-serif text-base">Age Requirement:</strong> You must be at least 13 years old (or the minimum legal age in your country to consent to data processing) to create an account on journolog.
               </li>
               <li>
-                <strong className="text-gray-900 font-serif text-base">Credentials & Access Keys:</strong> You are entirely responsible for keeping your dashboard password secure. Furthermore, you are responsible for managing the access passwords you create for your Private Journeys. If you choose a weak password and an unauthorized person accesses your private family timeline, journolog cannot be held responsible for the breach.
+                <strong className="text-gray-900 font-serif text-base">Credentials & Access Keys:</strong> You are entirely responsible for keeping your account login credentials secure. journolog cannot be held responsible for unauthorized access resulting from compromised credentials.
               </li>
             </ul>
           </section>
@@ -142,7 +142,7 @@ export function TermsOfUseClient() {
                 <strong className="text-gray-900 font-serif text-base">The Public Decency Rule (Public Journeys):</strong> Public journals are open to general audiences of all ages. Therefore, nudity, highly explicit adult imagery, or sexually suggestive themes are strictly prohibited on Public Journeys.
               </li>
               <li>
-                <strong className="text-gray-900 font-serif text-base">The Private Exception:</strong> Tasteful artistic nudity or intimate personal moments are permitted only if they are kept strictly behind our password-protected Private Journey layer. However, explicit commercial pornography is banned platform-wide across both tiers to protect our server network&apos;s reputation.
+                <strong className="text-gray-900 font-serif text-base">The Private Exception:</strong> Tasteful artistic nudity or intimate personal moments are permitted only if they are kept strictly on Private Journeys. However, explicit commercial pornography is banned platform-wide across both tiers to protect our server network&apos;s reputation.
               </li>
             </ul>
           </section>

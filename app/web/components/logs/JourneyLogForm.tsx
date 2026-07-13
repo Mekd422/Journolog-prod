@@ -99,13 +99,12 @@ export function JourneyLogForm() {
         />
       </div>
 
-
       <fieldset className="space-y-3">
-        <legend className="text-sm font-medium text-text-primary">
+        <legend className="text-sm font-medium text-[#2A2A2A]">
           Visibility
         </legend>
         <div className="flex flex-wrap gap-4">
-          <label className="flex items-center gap-2 text-sm text-text-body">
+          <label className="flex items-center gap-2 text-sm text-[#2A2A2A]">
             <input
               type="radio"
               name="visibility"
@@ -115,7 +114,7 @@ export function JourneyLogForm() {
             />
             Private
           </label>
-          <label className="flex items-center gap-2 text-sm text-text-body">
+          <label className="flex items-center gap-2 text-sm text-[#2A2A2A]">
             <input
               type="radio"
               name="visibility"

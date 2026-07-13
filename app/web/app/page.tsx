@@ -393,7 +393,7 @@ export default function HomePage() {
               <ul className="mt-5 space-y-4 border-t border-gray-100 pt-6 text-sm text-gray-600 font-serif">
                 <li className="flex items-center gap-2"><Check size={14} className="text-[#BA4A29] stroke-[3]" /> Unlimited email-to-log uploads</li>
                 <li className="flex items-center gap-2"><Check size={14} className="text-[#BA4A29] stroke-[3]" /> Large video uploads (up to 250MB)</li>
-                <li className="flex items-center gap-2"><Check size={14} className="text-[#BA4A29] stroke-[3]" /> Password-protected private journals</li>
+                <li className="flex items-center gap-2"><Check size={14} className="text-[#BA4A29] stroke-[3]" /> Private travel journals</li>
                 <li className="flex items-center gap-2"><Check size={14} className="text-[#BA4A29] stroke-[3]" /> Custom domain support</li>
               </ul>
             </div>
