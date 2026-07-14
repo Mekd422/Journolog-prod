@@ -212,7 +212,7 @@ export function TermsOfUseClient() {
           <div className="flex gap-6 font-semibold uppercase tracking-widest text-[10px]">
             <Link href="/policy" className="hover:text-white transition-colors">Privacy</Link>
             <Link href="/terms" className="text-white hover:text-white transition-colors">Terms</Link>
-            <Link href="#" className="hover:text-white transition-colors">About</Link>
+            <Link href="/about" className="hover:text-white transition-colors">About</Link>
             <Link href="#" className="hover:text-white transition-colors">Support</Link>
           </div>
 

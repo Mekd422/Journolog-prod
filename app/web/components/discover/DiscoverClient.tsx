@@ -289,7 +289,7 @@ export function DiscoverClient() {
             <Link href="/discover" className="text-white hover:text-accent transition-colors">Discover</Link>
             <Link href="/discover?tab=popular" className="text-white hover:text-accent transition-colors">Popular</Link>
             <Link href="/discover?tab=regions" className="text-white hover:text-accent transition-colors">Regions</Link>
-            <Link href="#" className="text-white hover:text-accent transition-colors">About</Link>
+            <Link href="/about" className="text-white hover:text-accent transition-colors">About</Link>
           </nav>
           <div className="flex items-center gap-4">
             <div className="hidden sm:block relative w-56">
