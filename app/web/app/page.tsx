@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Compass, Mail, ArrowRight, Check, Camera, Share2, MapPin, Globe, Edit3, Send, Star } from "lucide-react";
+import { Compass, Mail, ArrowRight, Check, Camera, Share2, MapPin, Globe, Edit3, Send, Star, Heart, BookOpen, Settings, Bold, Italic, List, Quote, Image as ImageIcon, MoreHorizontal, Calendar } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 function RotatingGlobe() {
@@ -240,59 +240,207 @@ export default function HomePage() {
         </cite>
       </section>
 
-      {/* Features Grid */}
+      {/* Purpose / Features Section */}
       <section id="features" className="mx-auto max-w-7xl px-6 py-20 border-b border-gray-200/40">
-        <div className="text-center max-w-md mx-auto mb-16">
-          <span className="text-xs font-mono tracking-widest text-[#BA4A29] uppercase">The Platform</span>
-          <h2 className="font-serif text-3xl text-gray-900 mt-2">Designed for the modern voyager</h2>
+        <div className="text-center max-w-xl mx-auto mb-16">
+          <div className="flex justify-center mb-3">
+            <svg className="w-5 h-5 text-[#BA4A29] fill-current" viewBox="0 0 24 24">
+              <path d="M12 3 C12 8 16 12 21 12 C16 12 12 16 12 21 C12 16 8 12 3 12 C8 12 12 8 12 3 Z" />
+            </svg>
+          </div>
+          <span className="text-[10px] font-mono tracking-widest text-[#BA4A29] uppercase">The Purpose</span>
+          <h2 className="font-serif text-3xl md:text-4xl text-gray-900 mt-3 leading-tight">
+            Made to keep the <span className="text-[#BA4A29]">journey</span> alive.
+          </h2>
+          <p className="text-sm md:text-base text-gray-500 font-serif leading-relaxed mt-4">
+            Your travels are more than a trip—they're a collection of moments that deserve to be remembered, cherished, and shared for years to come.
+          </p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2">
-          {/* Card 1 */}
-          <div className="bg-white border border-gray-200/60 rounded-xl p-8 flex flex-col justify-between shadow-xs hover:shadow-md transition-shadow">
+          {/* Card 1: Permanent home for your memories */}
+          <div className="bg-white border border-gray-200/60 rounded-2xl p-6 md:p-8 flex flex-col justify-between shadow-xs hover:shadow-md transition-shadow">
             <div className="max-w-md mb-8">
-              <div className="h-10 w-10 bg-[#BA4A29]/10 text-[#BA4A29] flex items-center justify-center rounded-lg mb-4">
-                <Edit3 className="h-5 w-5" />
+              <div className="h-10 w-10 bg-[#BA4A29]/10 text-[#BA4A29] flex items-center justify-center rounded-lg mb-5">
+                <Heart className="h-5 w-5" />
               </div>
-              <h3 className="font-serif text-2xl mb-3 text-gray-900">A clean writing sanctuary.</h3>
-              <p className="text-sm text-gray-600 leading-relaxed font-serif">
-                A minimal, typography-focused editor lets your reflections stand out. Drag-and-drop cover photos, insert locations, and tag your entries instantly.
+              <h3 className="font-serif text-2xl mb-3 text-gray-900 leading-snug">A permanent home for your memories.</h3>
+              <p className="text-sm text-gray-500 leading-relaxed font-serif">
+                A beautiful, uncluttered space designed to protect your travel stories from fading. Revisit your favorite detours, quiet moments, and milestones exactly as they felt, long after the dust on your boots has settled.
               </p>
             </div>
-            <div className="bg-[#FAF8F5] border border-gray-200/60 rounded-lg p-5 font-mono text-xs text-gray-700">
-              <div className="flex gap-2 mb-3 border-b border-gray-200/70 pb-2 text-gray-400">
-                <span className="font-bold">B</span><span>I</span><span>U</span><span className="ml-auto text-[10px]">📍 Lake Como, Italy</span>
+            
+            {/* Simulation of Journolog Editor */}
+            <div className="bg-[#FAF8F5] border border-gray-200/60 rounded-xl overflow-hidden shadow-xs flex">
+              {/* Simulated Left Sidebar */}
+              <div className="w-12 border-r border-gray-200/60 bg-[#FAF8F5] flex flex-col items-center py-4 gap-4 text-gray-400">
+                <div className="h-6 w-6 bg-[#BA4A29]/10 text-[#BA4A29] flex items-center justify-center rounded-md">
+                  <BookOpen className="h-3.5 w-3.5" />
+                </div>
+                <ImageIcon className="h-3.5 w-3.5 hover:text-gray-600 cursor-pointer transition-colors" />
+                <MapPin className="h-3.5 w-3.5 hover:text-gray-600 cursor-pointer transition-colors" />
+                <Compass className="h-3.5 w-3.5 hover:text-gray-600 cursor-pointer transition-colors" />
+                <Settings className="h-3.5 w-3.5 mt-auto hover:text-gray-600 cursor-pointer transition-colors" />
               </div>
-              <p className="font-serif text-sm leading-relaxed text-gray-800 italic">
-                Woke up to light mist hovering over the water. The mountains slope directly into the deep blue lake. Spent the morning journaling on the balcony...
-              </p>
+
+              {/* Simulated Main Editor Area */}
+              <div className="flex-1 bg-white p-4 font-serif">
+                {/* Simulated Editor Toolbar */}
+                <div className="flex items-center gap-2 border-b border-gray-200/60 pb-2 mb-3 text-[10px] text-gray-400 font-sans font-medium">
+                  <span className="font-bold cursor-pointer hover:text-gray-700">H2</span>
+                  <div className="w-[1px] h-3 bg-gray-200" />
+                  <Bold className="h-3 w-3 cursor-pointer hover:text-gray-700" />
+                  <Italic className="h-3 w-3 cursor-pointer hover:text-gray-700" />
+                  <div className="w-[1px] h-3 bg-gray-200" />
+                  <List className="h-3 w-3 cursor-pointer hover:text-gray-700" />
+                  <div className="w-[1px] h-3 bg-gray-200" />
+                  <Quote className="h-3 w-3 cursor-pointer hover:text-gray-700" />
+                  <ImageIcon className="h-3 w-3 cursor-pointer hover:text-gray-700" />
+                  <MoreHorizontal className="h-3 w-3 cursor-pointer hover:text-gray-700 ml-auto" />
+                </div>
+
+                {/* Editor Content */}
+                <div className="text-gray-800">
+                  <h4 className="font-serif font-bold text-base text-gray-900 leading-tight">Sunrise in Chiang Mai</h4>
+                  <div className="flex items-center gap-3 text-[9px] text-gray-400 font-sans mt-1 mb-2">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-2.5 w-2.5" /> May 12, 2024
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-2.5 w-2.5" /> Chiang Mai, Thailand
+                    </span>
+                  </div>
+                  <p className="text-[10px] leading-relaxed text-gray-500 mb-3">
+                    The city woke slowly, wrapped in soft golden light. From the temple steps, I watched the morning unfold—quiet, peaceful, unforgettable.
+                  </p>
+                  <div className="h-32 rounded-lg overflow-hidden border border-black/5 bg-gray-50">
+                    <img 
+                      src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=600" 
+                      className="w-full h-full object-cover" 
+                      alt="Sunrise temple Chiang Mai" 
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Card 2 */}
-          <div className="bg-white border border-gray-200/60 rounded-xl p-8 flex flex-col justify-between shadow-xs hover:shadow-md transition-shadow">
+          {/* Card 2: Bring them along, without the noise */}
+          <div className="bg-white border border-gray-200/60 rounded-2xl p-6 md:p-8 flex flex-col justify-between shadow-xs hover:shadow-md transition-shadow">
             <div className="max-w-md mb-8">
-              <div className="h-10 w-10 bg-[#BA4A29]/10 text-[#BA4A29] flex items-center justify-center rounded-lg mb-4">
-                <Mail className="h-5 w-5" />
+              <div className="h-10 w-10 bg-[#BA4A29]/10 text-[#BA4A29] flex items-center justify-center rounded-lg mb-5">
+                <Send className="h-5 w-5 -rotate-12" />
               </div>
-              <h3 className="font-serif text-2xl mb-3 text-gray-900">Log via Email. No app needed.</h3>
-              <p className="text-sm text-gray-600 leading-relaxed font-serif">
-                Write on the go. Send photos, text, or audio directly to your unique Journolog email address. We translate it instantly into beautiful log entries.
+              <h3 className="font-serif text-2xl mb-3 text-gray-900 leading-snug">Bring them along, without the noise.</h3>
+              <p className="text-sm text-gray-500 leading-relaxed font-serif">
+                Share your live timeline with family and friends via a single link or a secure password. Update your log straight from the road via email or WhatsApp—no apps for them to download, and no algorithms to please.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 bg-[#FAF8F5] rounded-lg p-4 border border-gray-200/60">
-              <div className="bg-white border border-gray-200/70 shadow-xs rounded-lg p-4 w-full sm:w-44 text-center">
-                <Send className="mx-auto text-[#BA4A29] mb-2" size={18} />
-                <p className="text-[10px] text-gray-400 font-mono">To: log@journolog.com</p>
-                <div className="h-1.5 w-16 bg-gray-200 mx-auto mt-2 rounded-full" />
+
+            {/* Simulation of Phone Email to Timeline Sync */}
+            <div className="bg-[#FAF8F5] border border-gray-200/60 rounded-xl p-4 flex gap-4 items-center justify-center relative overflow-hidden min-h-[220px]">
+              
+              {/* Smartphone Mockup */}
+              <div className="w-[125px] h-[200px] bg-black rounded-[20px] p-1 shadow-md border border-gray-800 flex-shrink-0 flex flex-col relative z-10 scale-95 sm:scale-100 transition-transform">
+                <div className="bg-[#FAF8F5] rounded-[16px] w-full h-full flex flex-col text-[7px] font-sans relative overflow-hidden">
+                  {/* Status Bar */}
+                  <div className="flex justify-between items-center px-2 py-0.5 text-gray-400 text-[5px] font-mono font-semibold bg-white border-b border-gray-100">
+                    <span>9:41</span>
+                    <div className="w-8 h-2.5 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-0.5 scale-[0.6]" />
+                    <div className="flex gap-0.5 items-center">
+                      <div className="w-1.5 h-1 bg-gray-400 rounded-2xs" />
+                      <div className="w-2.5 h-1 bg-gray-400 rounded-2xs" />
+                    </div>
+                  </div>
+
+                  {/* Mail Header */}
+                  <div className="bg-white border-b border-gray-100 px-2 py-1 flex items-center justify-between text-[6px]">
+                    <span className="text-[#BA4A29] font-medium cursor-pointer">Inbox</span>
+                    <span className="font-semibold text-gray-800">New Message</span>
+                    <Send className="h-2 w-2 text-[#BA4A29] fill-current" />
+                  </div>
+
+                  {/* Mail Info Fields */}
+                  <div className="bg-white px-2 py-1 space-y-1 text-gray-500 text-[5px] border-b border-gray-100">
+                    <div className="flex border-b border-gray-50 pb-0.5">
+                      <span className="w-6 text-gray-400">To:</span>
+                      <span className="text-[#BA4A29] font-mono">log@journolog.com</span>
+                    </div>
+                    <div className="flex">
+                      <span className="w-6 text-gray-400">Subject:</span>
+                      <span className="text-gray-800 font-medium">Sunset from the coast</span>
+                    </div>
+                  </div>
+
+                  {/* Mail Body / Image attachment */}
+                  <div className="flex-1 p-1 bg-white flex flex-col gap-1 overflow-hidden">
+                    <div className="h-16 rounded-sm overflow-hidden border border-black/5">
+                      <img 
+                        src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=300" 
+                        className="w-full h-full object-cover" 
+                        alt="Sunset coast image" 
+                      />
+                    </div>
+                    <div className="h-1 w-full bg-gray-100 rounded-full" />
+                    <div className="h-1 w-3/4 bg-gray-100 rounded-full" />
+                  </div>
+                </div>
               </div>
-              <ArrowRight className="text-gray-300 rotate-90 sm:rotate-0 flex-shrink-0" size={16} />
-              <div className="bg-white border border-gray-200/70 shadow-xs rounded-lg p-3 w-full sm:w-44 text-[10px]">
-                <span className="text-[9px] bg-green-50 text-green-700 px-1.5 py-0.5 rounded font-mono font-bold">PROCESSED</span>
-                <p className="mt-1 font-serif font-bold text-gray-800">Misty Alps Morning</p>
+
+              {/* Curved Dashed Connector Arrow (Visible on sm/md and larger screens) */}
+              <svg className="absolute top-[35%] left-[45%] w-14 h-10 pointer-events-none stroke-[#BA4A29] stroke-[1.5] fill-none hidden sm:block z-0 opacity-80" viewBox="0 0 100 50">
+                <path d="M 5,35 Q 50,5 92,28" strokeDasharray="3 3" />
+                <polygon points="86,22 93,29 88,34" fill="#BA4A29" stroke="none" />
+              </svg>
+
+              {/* Timeline Entry Mockup */}
+              <div className="flex-1 max-w-[155px] bg-white rounded-xl p-3 border border-gray-200/50 shadow-xs relative z-10 font-sans text-[7px] text-gray-800 flex flex-col justify-between">
+                <div>
+                  {/* Timeline User Header */}
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <div className="h-4.5 w-4.5 bg-[#2d4a3e] rounded-full flex items-center justify-center text-white text-[7px] font-bold">
+                      j
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-gray-900 text-[6px]">May 16, 2024</span>
+                      <span className="text-gray-400 text-[5px]">7:18 PM</span>
+                    </div>
+                  </div>
+
+                  {/* Image */}
+                  <div className="h-16 rounded-md overflow-hidden border border-black/5 mb-1.5">
+                    <img 
+                      src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=300" 
+                      className="w-full h-full object-cover" 
+                      alt="Sunset coast image published" 
+                    />
+                  </div>
+
+                  {/* Caption */}
+                  <p className="text-gray-600 leading-snug font-serif text-[7px] mb-1">
+                    Sunset from the coast. The colors tonight were unreal.
+                  </p>
+
+                  {/* Pill Badge */}
+                  <span className="inline-flex items-center gap-0.5 bg-[#FCEDE8] text-[#BA4A29] px-1.5 py-0.5 rounded-full text-[5px] font-mono font-medium border border-[#BA4A29]/10">
+                    <Mail className="h-1.5 w-1.5" /> Posted via Email
+                  </span>
+                </div>
+
+                {/* Sub timeline indicator */}
+                <div className="border-t border-gray-100 pt-1.5 mt-2 flex items-center gap-1.5 text-gray-400 text-[5px]">
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+                  <span>May 16, 2024 9:32 AM</span>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Bottom Footer Badge */}
+        <div className="flex items-center justify-center gap-2 mt-16 text-xs md:text-sm text-gray-700 font-serif text-center">
+          <span className="text-[#BA4A29]">🌐</span>
+          <span>Your story. Your way. Kept safe, and always yours to share.</span>
         </div>
       </section>
 
